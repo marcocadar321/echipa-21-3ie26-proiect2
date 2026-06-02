@@ -13,6 +13,19 @@
   "attributes": {
     "Titlu": {
       "type": "string"
+    },
+    "json": {
+      "type": "blocks"
+    },
+    "media": {
+      "type": "media",
+      "multiple": false,
+      "allowedTypes": [
+        "images",
+        "files",
+        "videos",
+        "audios"
+      ]
     }
   }
 }
