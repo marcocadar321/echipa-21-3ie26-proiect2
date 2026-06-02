@@ -1,97 +1,113 @@
-import React, { useState } from 'react';
+import React from 'react'
 
-// Conținut real, fără Lorem Ipsum, pregătit pentru tema de Florărie
-const DATE_PRODUSE = [
-  { id: 1, nume: "Buchet 'Vis de Primăvară'", pret: 149, categorie: "Buchete", imagine: "https://images.unsplash.com/photo-1561181286-d3fee7d55364?q=80&w=500", descriere: "Un buchet mixt superb realizat manual cu lalele roz pastel, frezii albe parfumate și crenguțe proaspete de eucalipt." },
-  { id: 2, nume: "Trandafir Roșu Criogenat", pret: 89, categorie: "Flori Criogenate", imagine: "https://images.unsplash.com/photo-1526047932273-341f2a7631f9?q=80&w=500", descriere: "Trandafir roșu premium nemuritor securizat într-o cupolă elegantă de sticlă pe suport de lemn natural." },
-  { id: 3, nume: "Orhidee Imperială la Ghiveci", pret: 120, categorie: "Plante", imagine: "https://images.unsplash.com/photo-1463936575829-25148e1db1b8?q=80&w=500", descriere: "Orhidee Phalaenopsis albă cu două tije bogate în flori, ideală pentru a aduce eleganță biroului sau livingului." },
-  { id: 4, nume: "Buchet Ardent de Trandafiri", pret: 210, categorie: "Buchete", imagine: "https://images.unsplash.com/photo-1582794543139-8ac9cb0f7b11?q=80&w=500", descriere: "Aranjament floral spectaculos compus din 19 trandafiri roșii catifelați importați din Ecuador." }
-];
+export default function Produse({ searchQuery, selectedCategory, setCartCount }) {
+  const listaProduse = [
+    {
+      id: 1,
+      nume: 'Buchet Lalele Roz',
+      categorie: 'Buchete',
+      pret: 150,
+      imagine: 'https://images.unsplash.com/photo-1520763185298-1b434c919102?q=80&w=600&auto=format&fit=crop',
+      descriere: 'Lalele proaspete de primăvară într-un aranjament delicat.'
+    },
+    {
+      id: 2,
+      nume: 'Trandafir Criogenat Roșu',
+      categorie: 'Flori Criogenate',
+      pret: 85,
+      imagine: 'https://images.unsplash.com/photo-1533616688419-b7a585564566?q=80&w=600&auto=format&fit=crop',
+      descriere: 'Un trandafir nemuritor care rezistă ani de zile fără apă.'
+    },
+    {
+      id: 3,
+      nume: 'Orhidee la Ghiveci',
+      categorie: 'Plante',
+      pret: 120,
+      imagine: 'https://images.unsplash.com/photo-1525310072745-f49212b5ac6d?q=80&w=600&auto=format&fit=crop',
+      descriere: 'Orhidee Phalaenopsis elegantă, perfectă pentru apartament.'
+    },
+    {
+      id: 4,
+      nume: 'Buchet Mixt de Vară',
+      categorie: 'Buchete',
+      pret: 210,
+      imagine: 'https://images.unsplash.com/photo-1561181286-d3fee7d55364?q=80&w=600&auto=format&fit=crop',
+      descriere: 'Combinație spectaculoasă de boboci de trandafiri și hortensii.'
+    }
+  ]
 
-export default function Produse() {
-  const [produse] = useState(DATE_PRODUSE);
-  const [categorieActiva, setCategorieActiva] = useState("Toate");
+  const produseFiltrate = listaProduse.filter((produs) => {
+    const potrivesteCategoria = selectedCategory === 'Toate' || produs.categorie === selectedCategory
+    const potrivesteCautarea = produs.nume.toLowerCase().includes(searchQuery.toLowerCase()) || 
+                               produs.descriere.toLowerCase().includes(searchQuery.toLowerCase())
+    return potrivesteCategoria && potrivesteCautarea
+  })
 
-  const categorii = ["Toate", "Buchete", "Flori Criogenate", "Plante"];
-
-  const produseFiltrate = categorieActiva === "Toate" 
-    ? produse 
-    : produse.filter(p => p.categorie === categorieActiva);
+  // Funcție care se rulează la click pe buton
+  const adaugaInCos = () => {
+    setCartCount((prevCount) => prevCount + 1)
+  }
 
   return (
-    <div className="bg-zinc-50 dark:bg-zinc-950 min-h-screen py-12 transition-colors duration-300">
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        
-        {/* Antetul Paginii de Produse */}
-        <div className="text-center mb-12">
-          <h1 className="text-4xl font-extrabold tracking-tight text-zinc-900 dark:text-white sm:text-5xl font-serif">
-            Produsele Noastre
-          </h1>
-          <p className="mt-4 text-lg text-zinc-600 dark:text-zinc-400 max-w-2xl mx-auto">
-            Descoperă flori proaspete și aranjamente deosebite, create cu atenție la detalii de floriștii noștri locali.
-          </p>
-        </div>
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+      <div className="text-center mb-10">
+        <h2 className="text-3xl font-extrabold text-zinc-900 dark:text-zinc-50 font-sans tracking-tight">
+          Produsele Noastre
+        </h2>
+        <p className="text-zinc-500 dark:text-zinc-400 max-w-md mx-auto mt-2 text-sm">
+          Descoperă flori proaspete și aranjamente deosebite, create cu atenție de floriștii noștri locali.
+        </p>
+      </div>
 
-        {/* Bloc Filtrare pe Categorii */}
-        <div className="flex flex-wrap justify-center gap-3 mb-12">
-          {categorii.map((cat) => (
-            <button
-              key={cat}
-              onClick={() => setCategorieActiva(cat)}
-              className={`px-6 py-2 rounded-full text-sm font-medium transition-all ${
-                categorieActiva === cat
-                  ? "bg-pink-600 text-white shadow-md shadow-pink-500/20"
-                  : "bg-white dark:bg-zinc-900 text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800 border border-zinc-200 dark:border-zinc-800"
-              }`}
-            >
-              {cat}
-            </button>
-          ))}
-        </div>
-
-        {/* Grid Responsive pentru Cardurile de Produse */}
-        <div className="grid grid-cols-1 gap-y-10 gap-x-6 sm:grid-cols-2 lg:grid-cols-3 xl:gap-x-8">
+      {produseFiltrate.length > 0 ? (
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
           {produseFiltrate.map((produs) => (
             <div 
               key={produs.id} 
-              className="group relative flex flex-col overflow-hidden rounded-2xl bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 shadow-sm hover:shadow-xl transition-all duration-300"
+              className="bg-white dark:bg-zinc-900 border border-zinc-100 dark:border-zinc-800 rounded-2xl overflow-hidden shadow-xs hover:shadow-md transition-all duration-300 group flex flex-col justify-between"
             >
-              {/* Imagine wrapper cu efect hover */}
-              <div className="h-64 overflow-hidden bg-zinc-200">
-                <img
-                  src={produs.imagine}
-                  alt={produs.nume}
-                  className="h-full w-full object-cover object-center transition-transform duration-500 group-hover:scale-105"
-                />
-              </div>
-
-              {/* Conținut Card */}
-              <div className="flex flex-1 flex-col p-6">
-                <span className="text-xs font-bold tracking-wider text-pink-600 dark:text-pink-400 uppercase mb-2">
-                  {produs.categorie}
-                </span>
-                <h3 className="text-lg font-bold text-zinc-900 dark:text-white mb-2 group-hover:text-pink-600 transition-colors">
-                  {produs.nume}
-                </h3>
-                <p className="text-sm text-zinc-500 dark:text-zinc-400 mb-6 flex-1 line-clamp-3">
-                  {produs.descriere}
-                </p>
-                
-                {/* Preț și Buton acțiune */}
-                <div className="flex items-center justify-between pt-4 border-t border-zinc-100 dark:border-zinc-800">
-                  <span className="text-xl font-black text-zinc-900 dark:text-white">
-                    {produs.pret} Lei
+              <div>
+                <div className="relative overflow-hidden aspect-square bg-zinc-100 dark:bg-zinc-800">
+                  <img 
+                    src={produs.imagine} 
+                    alt={produs.nume} 
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                  />
+                  <span className="absolute top-3 left-3 bg-white/90 dark:bg-zinc-900/90 backdrop-blur-xs text-[10px] font-bold px-2.5 py-1 rounded-full text-zinc-700 dark:text-zinc-300 uppercase tracking-wider shadow-xs">
+                    {produs.categorie}
                   </span>
-                  <button className="rounded-xl bg-zinc-900 dark:bg-pink-600 px-4 py-2 text-xs font-semibold text-white hover:bg-zinc-800 dark:hover:bg-pink-700 transition-colors shadow-sm">
-                    Adaugă în coș
-                  </button>
                 </div>
+                <div className="p-4 text-left">
+                  <h3 className="font-bold text-base text-zinc-800 dark:text-zinc-100 line-clamp-1">
+                    {produs.nume}
+                  </h3>
+                  <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-1 line-clamp-2 min-h-[32px]">
+                    {produs.descriere}
+                  </p>
+                </div>
+              </div>
+              <div className="p-4 pt-0 text-left flex items-center justify-between gap-2">
+                <span className="text-lg font-black text-pink-600 dark:text-pink-400">
+                  {produs.pret} lei
+                </span>
+                <button 
+                  onClick={adaugaInCos} // Atașăm funcția pe buton
+                  className="bg-zinc-900 hover:bg-pink-600 text-white dark:bg-zinc-800 dark:hover:bg-pink-500 text-xs font-semibold px-3 py-2 rounded-xl transition-all cursor-pointer"
+                >
+                  Adaugă în coș
+                </button>
               </div>
             </div>
           ))}
         </div>
-
-      </div>
+      ) : (
+        <div className="text-center py-12 bg-white dark:bg-zinc-900 rounded-2xl border border-dashed border-zinc-200 dark:border-zinc-800">
+          <span className="text-3xl">🔍</span>
+          <p className="text-zinc-500 dark:text-zinc-400 mt-2 text-sm font-medium">
+            Nu am găsit niciun produs care să se potrivească.
+          </p>
+        </div>
+      )}
     </div>
-  );
+  )
 }
