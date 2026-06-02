@@ -1,0 +1,40 @@
+{
+  "kind": "collectionType",
+  "collectionName": "articles",
+  "info": {
+    "singularName": "article",
+    "pluralName": "articles",
+    "displayName": "Article"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "Titlu": {
+      "type": "string"
+    },
+    "Descrierescurta": {
+      "type": "text"
+    },
+    "Imagine": {
+      "type": "media",
+      "multiple": false,
+      "allowedTypes": [
+        "images",
+        "files",
+        "videos",
+        "audios"
+      ]
+    },
+    "Categorie": {
+      "type": "enumeration",
+      "enum": [
+        "Buchete",
+        "Aranjamente florale",
+        "Evenimente",
+        "Flori de ocazie "
+      ]
+    }
+  }
+}

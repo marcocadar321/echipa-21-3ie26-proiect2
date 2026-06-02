@@ -11,8 +11,17 @@
   },
   "pluginOptions": {},
   "attributes": {
-    "text": {
+    "Email": {
       "type": "string"
+    },
+    "Telefon": {
+      "type": "string"
+    },
+    "Adresa": {
+      "type": "string"
+    },
+    "ProgramLucru": {
+      "type": "blocks"
     }
   }
 }
