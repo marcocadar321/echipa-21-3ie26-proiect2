@@ -1,8 +1,3 @@
-@import "tailwindcss";
-
-@source "../index.html";
-@source "./**/*.{js,ts,jsx,tsx}";
-
 :root {
   --text: #6b6375;
   --text-h: #08060d;
@@ -114,4 +109,3 @@ code {
   padding: 4px 8px;
   background: var(--code-bg);
 }
-

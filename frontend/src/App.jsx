@@ -1,20 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import Header from './components/Header';
-import Produse from './pages/Produse';
+
+import Navbar from './Navbar'; 
+import Produse from './produse'; 
+import Home from './Home'; 
 
 function App() {
-  // 1. Păstrăm starea de Dark Mode creată de colegul tău
   const [darkMode, setDarkMode] = useState(false);
-
-  // 2. Adăugăm stările noi pentru Filtrare și Căutare (pentru grila de evaluare)
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('Toate');
-  
-  // 3. STATIE NOUĂ: Numărul de produse din coș (bifează dinamică avansată în grilă!)
   const [cartCount, setCartCount] = useState(0);
 
-  // Sincronizarea modulul Dark Mode cu HTML-ul pentru Tailwind (Munca intactă a colegului)
   useEffect(() => {
     if (darkMode) {
       document.documentElement.classList.add('dark');
@@ -25,51 +21,33 @@ function App() {
 
   return (
     <Router>
-      <div className="min-h-screen bg-white text-zinc-900 transition-colors duration-300 dark:bg-zinc-950 dark:text-zinc-50">
+      <div className="App min-h-screen bg-[#fdf5f2] dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100 transition-colors duration-200">
         
-        {/* HEADER-ul tău (Navbar-ul):
-          Trimitem Dark Mode-ul, stările de căutare/categorii ȘI numărul din coș (cartCount)
-        */}
-        <Header 
-          darkMode={darkMode} 
-          setDarkMode={setDarkMode} 
+        <Navbar 
           searchQuery={searchQuery} 
-          setSearchQuery={setSearchQuery}
-          selectedCategory={selectedCategory}
-          setSelectedCategory={setSelectedCategory}
-          cartCount={cartCount} 
+          setSearchQuery={setSearchQuery} 
+          cartCount={cartCount}
+          darkMode={darkMode}
+          setDarkMode={setDarkMode}
         />
-        
-        <main>
-          <Routes>
-            {/* Rutele existente din proiect:
-              Trimitem căutarea, categoria ȘI funcția setCartCount ca să putem adăuga în coș din pagină
-            */}
-            <Route 
-              path="/produse" 
-              element={
-                <Produse 
-                  searchQuery={searchQuery} 
-                  selectedCategory={selectedCategory} 
-                  setCartCount={setCartCount} 
-                />
-              } 
-            />
-            
-            <Route 
-              path="/" 
-              element={
-                <Produse 
-                  searchQuery={searchQuery} 
-                  selectedCategory={selectedCategory} 
-                  setCartCount={setCartCount} 
-                />
-              } 
-            />
-            
-            {/* Tot aici vor adăuga și ceilalți colegi rutele lor ulterior (ex: /despre, /contact) */}
-          </Routes>
-        </main>
+
+        <Routes>
+          {/* Pagina ta originală de Home este afișată DOAR pe ruta principală */}
+          <Route path="/" element={<Home />} />
+
+          {/* Pagina de produse (Meniul de flori) este complet separată */}
+          <Route 
+            path="/produse" 
+            element={
+              <Produse 
+                searchQuery={searchQuery} 
+                selectedCategory={selectedCategory} 
+                setSelectedCategory={setSelectedCategory} 
+                setCartCount={setCartCount} 
+              />
+            } 
+          />
+        </Routes>
 
       </div>
     </Router>
