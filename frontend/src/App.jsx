@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 
-import Navbar from './Navbar'; 
-import Produse from './produse'; 
-import Home from './Home'; 
+import Navbar from './Navbar';
+import Meniu from './Meniu';       // Pagina de meniu (Meniu.jsx)
+import Produse from './Produse.jsx';   // Pagina de produse veche (Produse.jsx)
+import Home from './Home';
 
 function App() {
   const [darkMode, setDarkMode] = useState(false);
@@ -22,30 +23,38 @@ function App() {
   return (
     <Router>
       <div className="App min-h-screen bg-[#fdf5f2] dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100 transition-colors duration-200">
-        
-        <Navbar 
-          searchQuery={searchQuery} 
-          setSearchQuery={setSearchQuery} 
+
+        <Navbar
+          searchQuery={searchQuery}
+          setSearchQuery={setSearchQuery}
           cartCount={cartCount}
           darkMode={darkMode}
           setDarkMode={setDarkMode}
         />
 
         <Routes>
-          {/* Pagina ta originală de Home este afișată DOAR pe ruta principală */}
+          {/* Pagina principală */}
           <Route path="/" element={<Home />} />
 
-          {/* Pagina de produse (Meniul de flori) este complet separată */}
-          <Route 
-            path="/produse" 
+          {/* Pagina Meniu — corelată cu Strapi, coș propriu, categorii, filtre */}
+          <Route
+            path="/meniu"
             element={
-              <Produse 
-                searchQuery={searchQuery} 
-                selectedCategory={selectedCategory} 
-                setSelectedCategory={setSelectedCategory} 
-                setCartCount={setCartCount} 
+              <Meniu setCartCount={setCartCount} />
+            }
+          />
+
+          {/* Pagina Produse (varianta veche, păstrată dacă mai e nevoie) */}
+          <Route
+            path="/produse"
+            element={
+              <Produse
+                searchQuery={searchQuery}
+                selectedCategory={selectedCategory}
+                setSelectedCategory={setSelectedCategory}
+                setCartCount={setCartCount}
               />
-            } 
+            }
           />
         </Routes>
 
