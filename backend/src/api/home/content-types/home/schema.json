@@ -17,6 +17,21 @@
     "Subtitlu": {
       "type": "text"
     },
+    "TextButonHero": {
+      "type": "string"
+    },
+    "LinkButonHero": {
+      "type": "string"
+    },
+    "TextIntroductiv": {
+      "type": "blocks"
+    },
+    "SEO_Title": {
+      "type": "string"
+    },
+    "SEO_Description": {
+      "type": "text"
+    },
     "ImagineHero": {
       "type": "media",
       "multiple": false,

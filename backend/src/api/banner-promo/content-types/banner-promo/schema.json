@@ -1,0 +1,31 @@
+{
+  "kind": "singleType",
+  "collectionName": "banner_promos",
+  "info": {
+    "singularName": "banner-promo",
+    "pluralName": "banner-promos",
+    "displayName": "BannerPromo"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "TextBanner": {
+      "type": "string"
+    },
+    "TextButon": {
+      "type": "string"
+    },
+    "LinkButon": {
+      "type": "string"
+    },
+    "IsActiv": {
+      "type": "boolean"
+    },
+    "CuloareFund": {
+      "type": "string",
+      "default": "#C8A882"
+    }
+  }
+}

@@ -2,18 +2,18 @@ import type { Core } from '@strapi/strapi';
 
 const config = ({ env }: Core.Config.Shared.ConfigParams): Core.Config.Admin => ({
   auth: {
-    secret: env('ADMIN_JWT_SECRET') || 'unSecretAdminFoarteLungSiRandom123456',
+    secret: env('ADMIN_JWT_SECRET'),
   },
   apiToken: {
-    salt: env('API_TOKEN_SALT') || 'unSaltPentruAPITokenRandom123456',
+    salt: env('API_TOKEN_SALT'),
   },
   transfer: {
     token: {
-      salt: env('TRANSFER_TOKEN_SALT') || 'unSaltPentruTransferRandom123456',
+      salt: env('TRANSFER_TOKEN_SALT'),
     },
   },
   secrets: {
-    encryptionKey: env('ENCRYPTION_KEY') || 'oCheieDeCriptareRandomDeMin32Caractere',
+    encryptionKey: env('ENCRYPTION_KEY'),
   },
   flags: {
     nps: env.bool('FLAG_NPS', true),
