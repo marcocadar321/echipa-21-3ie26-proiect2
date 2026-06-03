@@ -1,16 +1,14 @@
-import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 
 const NAV_LINKS = [
-  { name: "Acasă", path: "/" },          // Corelat cu pagina ta Home
+  { name: "Acasă", path: "/" },
   { name: "Despre", path: "/despre" },
-  { name: "Meniu", path: "/produse" },     // Corelat cu pagina ta de Produse din Strapi
+  { name: "Meniu", path: "/aranjamente" },
   { name: "Contact", path: "/contact" },
 ];
 
-const Navbar = ({ searchQuery, setSearchQuery, cartCount }) => {
+const Navbar = () => {
   const location = useLocation();
-  const [showSearchInput, setShowSearchInput] = useState(false);
 
   return (
     <>
@@ -178,22 +176,13 @@ const Navbar = ({ searchQuery, setSearchQuery, cartCount }) => {
           transform: scale(1.1);
         }
 
-        /* Badge-ul de coș optimizat pentru cifre */
-        .nav-badge-count {
+        .nav-badge {
           position: absolute;
-          top: -2px; right: -2px;
-          background: linear-gradient(135deg, #be185d, #ec4899);
-          color: white;
-          font-size: 0.65rem;
-          font-weight: bold;
-          min-width: 16px;
-          height: 16px;
-          padding: 0 4px;
+          top: 4px; right: 4px;
+          width: 8px; height: 8px;
           border-radius: 9999px;
           border: 1.5px solid #fff8f9;
-          display: flex;
-          align-items: center;
-          justify-content: center;
+          background: linear-gradient(135deg, #be185d, #ec4899);
         }
 
         .nav-separator {
@@ -225,24 +214,6 @@ const Navbar = ({ searchQuery, setSearchQuery, cartCount }) => {
           box-shadow: 0 5px 18px rgba(190,24,93,0.38);
           transform: translateY(-1px);
         }
-
-        /* Bara de căutare input fluidă */
-        .nav-search-input {
-          border: 1px solid rgba(236, 163, 179, 0.5);
-          background: white;
-          padding: 6px 14px;
-          border-radius: 9999px;
-          font-size: 0.8rem;
-          color: #6b4a5e;
-          outline: none;
-          width: 150px;
-          transition: all 0.3s ease;
-        }
-        .nav-search-input:focus {
-          border-color: #be185d;
-          box-shadow: 0 0 8px rgba(190,24,93,0.15);
-          width: 180px;
-        }
       `}</style>
 
       <nav className="nav-root">
@@ -260,7 +231,6 @@ const Navbar = ({ searchQuery, setSearchQuery, cartCount }) => {
           {/* LINK-URI */}
           <ul className="nav-links">
             {NAV_LINKS.map((item) => {
-              // Verificăm activitatea rutei
               const isActive = location.pathname === item.path;
               return (
                 <li key={item.name}>
@@ -280,40 +250,19 @@ const Navbar = ({ searchQuery, setSearchQuery, cartCount }) => {
           {/* ACȚIUNI */}
           <div className="nav-actions">
 
-            {/* Input Căutare Dinamic - Apare la click doar pe pagina de produse */}
-            {location.pathname === '/produse' && showSearchInput && (
-              <input
-                type="text"
-                placeholder="Caută o floare..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="nav-search-input"
-                autoFocus
-              />
-            )}
+            {/* Căutare */}
+            <button className="nav-icon-btn" aria-label="Căutare">
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                <circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/>
+              </svg>
+            </button>
 
-            {/* Buton Căutare */}
-            {location.pathname === '/produse' && (
-              <button 
-                className="nav-icon-btn" 
-                aria-label="Căutare"
-                onClick={() => setShowSearchInput(!showSearchInput)}
-              >
-                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-                  <circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/>
-                </svg>
-              </button>
-            )}
-
-            {/* Coș de Cumpărături */}
+            {/* Coș */}
             <button className="nav-icon-btn" aria-label="Coș de cumpărături">
               <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/>
               </svg>
-              {/* Afișează numărul real din coș dacă acesta este mai mare decât 0 */}
-              {cartCount > 0 && (
-                <span className="nav-badge-count">{cartCount}</span>
-              )}
+              <span className="nav-badge" />
             </button>
 
             <div className="nav-separator" />
