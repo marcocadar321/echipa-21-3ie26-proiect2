@@ -500,6 +500,72 @@ export interface ApiArticleArticle extends Struct.CollectionTypeSchema {
   };
 }
 
+export interface ApiBannerPromoBannerPromo extends Struct.SingleTypeSchema {
+  collectionName: 'banner_promos';
+  info: {
+    displayName: 'BannerPromo';
+    pluralName: 'banner-promos';
+    singularName: 'banner-promo';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    CuloareFund: Schema.Attribute.String &
+      Schema.Attribute.DefaultTo<'#C8A882'>;
+    IsActiv: Schema.Attribute.Boolean;
+    LinkButon: Schema.Attribute.String;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::banner-promo.banner-promo'
+    > &
+      Schema.Attribute.Private;
+    publishedAt: Schema.Attribute.DateTime;
+    TextBanner: Schema.Attribute.String;
+    TextButon: Schema.Attribute.String;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+  };
+}
+
+export interface ApiCategoriiCategorii extends Struct.CollectionTypeSchema {
+  collectionName: 'categoriis';
+  info: {
+    displayName: 'Categorii';
+    pluralName: 'categoriis';
+    singularName: 'categorii';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    Descriere: Schema.Attribute.String;
+    Imagine: Schema.Attribute.Media<'images' | 'files' | 'videos' | 'audios'>;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::categorii.categorii'
+    > &
+      Schema.Attribute.Private;
+    Nume: Schema.Attribute.String & Schema.Attribute.Required;
+    Ordine: Schema.Attribute.Integer;
+    produses: Schema.Attribute.Relation<'oneToMany', 'api::produse.produse'>;
+    publishedAt: Schema.Attribute.DateTime;
+    Slug: Schema.Attribute.UID<'Nume'>;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+  };
+}
+
 export interface ApiContactContact extends Struct.SingleTypeSchema {
   collectionName: 'contacts';
   info: {
@@ -548,12 +614,62 @@ export interface ApiHomeHome extends Struct.SingleTypeSchema {
     ImagineHero: Schema.Attribute.Media<
       'images' | 'files' | 'videos' | 'audios'
     >;
+    LinkButonHero: Schema.Attribute.String;
     locale: Schema.Attribute.String & Schema.Attribute.Private;
     localizations: Schema.Attribute.Relation<'oneToMany', 'api::home.home'> &
       Schema.Attribute.Private;
     publishedAt: Schema.Attribute.DateTime;
+    SEO_Description: Schema.Attribute.Text;
+    SEO_Title: Schema.Attribute.String;
     Subtitlu: Schema.Attribute.Text;
+    TextButonHero: Schema.Attribute.String;
+    TextIntroductiv: Schema.Attribute.Blocks;
     Titlu: Schema.Attribute.String;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+  };
+}
+
+export interface ApiProduseProduse extends Struct.CollectionTypeSchema {
+  collectionName: 'produses';
+  info: {
+    displayName: 'Produse';
+    pluralName: 'produses';
+    singularName: 'produse';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    categorii: Schema.Attribute.Relation<
+      'manyToOne',
+      'api::categorii.categorii'
+    >;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    Descriere: Schema.Attribute.Text;
+    Eticheta: Schema.Attribute.Enumeration<
+      ['Nou', 'Bestseller', 'Promo\u021Bie', 'Limitat']
+    >;
+    Imagine: Schema.Attribute.Media<'images' | 'files' | 'videos' | 'audios'>;
+    Imagini: Schema.Attribute.Media<
+      'images' | 'files' | 'videos' | 'audios',
+      true
+    >;
+    IsFeatured: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::produse.produse'
+    > &
+      Schema.Attribute.Private;
+    Nume: Schema.Attribute.String & Schema.Attribute.Required;
+    Pret: Schema.Attribute.Decimal;
+    PretVechi: Schema.Attribute.Decimal;
+    publishedAt: Schema.Attribute.DateTime;
+    Slug: Schema.Attribute.UID<'Nume'>;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
@@ -585,6 +701,47 @@ export interface ApiProjectProject extends Struct.CollectionTypeSchema {
       true
     >;
     publishedAt: Schema.Attribute.DateTime;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+  };
+}
+
+export interface ApiTestimonialeTestimoniale
+  extends Struct.CollectionTypeSchema {
+  collectionName: 'testimoniales';
+  info: {
+    displayName: 'Testimoniale';
+    pluralName: 'testimoniales';
+    singularName: 'testimoniale';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    Imagine: Schema.Attribute.Media<'images' | 'files' | 'videos' | 'audios'>;
+    IsVisible: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<true>;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::testimoniale.testimoniale'
+    > &
+      Schema.Attribute.Private;
+    Mesaj: Schema.Attribute.Text & Schema.Attribute.Required;
+    Nume: Schema.Attribute.String & Schema.Attribute.Required;
+    Oras: Schema.Attribute.String;
+    publishedAt: Schema.Attribute.DateTime;
+    Rating: Schema.Attribute.Integer &
+      Schema.Attribute.SetMinMax<
+        {
+          max: 5;
+          min: 1;
+        },
+        number
+      >;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
@@ -1104,9 +1261,13 @@ declare module '@strapi/strapi' {
       'admin::user': AdminUser;
       'api::about.about': ApiAboutAbout;
       'api::article.article': ApiArticleArticle;
+      'api::banner-promo.banner-promo': ApiBannerPromoBannerPromo;
+      'api::categorii.categorii': ApiCategoriiCategorii;
       'api::contact.contact': ApiContactContact;
       'api::home.home': ApiHomeHome;
+      'api::produse.produse': ApiProduseProduse;
       'api::project.project': ApiProjectProject;
+      'api::testimoniale.testimoniale': ApiTestimonialeTestimoniale;
       'plugin::content-releases.release': PluginContentReleasesRelease;
       'plugin::content-releases.release-action': PluginContentReleasesReleaseAction;
       'plugin::i18n.locale': PluginI18NLocale;
