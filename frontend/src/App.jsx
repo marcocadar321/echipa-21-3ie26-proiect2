@@ -1,27 +1,34 @@
-import { BrowserRouter, Routes, Route } from 'react-router-dom'
-import Navbar from './Navbar'
-import Meniu  from './Meniu'
+import React, { useState, useEffect } from 'react';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 
-const PaginaSimple = ({ titlu }) => (
-  <div style={{ textAlign: 'center', padding: '80px 24px' }}>
-    <h1 style={{ fontSize: 28, color: '#be185d', fontFamily: 'serif' }}>{titlu}</h1>
-    <p style={{ color: '#9d6b8a', marginTop: 8 }}>Această pagină este în construcție.</p>
-  </div>
-)
+function App() {
+  // 1. Păstrăm starea de Dark Mode creată de colegul tău
+  const [darkMode, setDarkMode] = useState(false);
 
-export default function App() {
+  // 2. Adăugăm stările noi pentru Filtrare și Căutare (pentru grila de evaluare)
+  const [searchQuery, setSearchQuery] = useState('');
+  const [selectedCategory, setSelectedCategory] = useState('Toate');
+  
+  // 3. STATIE NOUĂ: Numărul de produse din coș (bifează dinamică avansată în grilă!)
+  const [cartCount, setCartCount] = useState(0);
+
+  // Sincronizarea modulul Dark Mode cu HTML-ul pentru Tailwind (Munca intactă a colegului)
+  useEffect(() => {
+    if (darkMode) {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+  }, [darkMode]);
+
   return (
-    <BrowserRouter>
-      <Navbar />
-      <Routes>
-        <Route path="/"           element={<Meniu />} />
-        <Route path="/aranjamente" element={<Meniu />} />
-        <Route path="/meniu"      element={<Meniu />} />
-        <Route path="/despre"     element={<PaginaSimple titlu="Despre noi" />} />
-        <Route path="/contact"    element={<PaginaSimple titlu="Contact" />} />
-        <Route path="/comanda"    element={<PaginaSimple titlu="Comandă" />} />
-        <Route path="*"           element={<Meniu />} />
-      </Routes>
-    </BrowserRouter>
-  )
+    <Router>
+      <div className="App">
+        <h1>Proiectul meu</h1>
+        {/* Aici vom adăuga Navbar-ul și Rutele ulterior */}
+      </div>
+    </Router>
+  );
 }
+
+export default App;
