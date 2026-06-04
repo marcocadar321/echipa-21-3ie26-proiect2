@@ -1,157 +1,339 @@
 import React, { useState, useEffect } from 'react';
+import { getImageUrl } from './api/strapi';
+
+const BASE = 'http://localhost:1337';
 
 export default function Produse({ searchQuery, selectedCategory, setSelectedCategory, setCartCount }) {
-  const [listaProduse, setListaProduse] = useState([]);
-  const [categoriiDinamice, setCategoriiDinamice] = useState(['Toate']);
-  const [loading, setLoading] = useState(true);
+  const [listaProduse, setListaProduse]     = useState([]);
+  const [categorii, setCategorii]           = useState([]);
+  const [loading, setLoading]               = useState(true);
   const [produsSelectat, setProdusSelectat] = useState(null);
   const [optiuneSortare, setOptiuneSortare] = useState('implicit');
+  const [hoveredId, setHoveredId]           = useState(null);
 
-  // Preluarea datelor din Strapi v5 (Colecția ta 'Article')
+  /* ── fetch produse ── */
   useEffect(() => {
-    fetch('http://localhost:1337/api/articles')
-      .then((response) => {
-        if (!response.ok) throw new Error('Eroare la rețea');
-        return response.json();
-      })
-      .then((res) => {
-        if (res.data) {
-          const produseMapate = res.data.map((item) => {
-            const attrs = item.attributes || item;
+    Promise.all([
+      fetch(`${BASE}/api/produses?populate=*`).then(r => r.json()),
+      fetch(`${BASE}/api/categorii?populate=*&sort=Ordine:asc`).then(r => r.json()),
+    ])
+      .then(([prodRes, catRes]) => {
+        if (prodRes.data) {
+          const mapped = prodRes.data.map(item => {
+            const a = item.attributes || item;
+            const imgData = a.Imagine?.data?.attributes || a.Imagine;
+            const imgUrl  = imgData?.url ? `${BASE}${imgData.url}` : null;
+            const catData = a.categorii?.data?.attributes || a.categorii;
             return {
-              id: item.id,
-              nume: attrs.Titlu || 'Floare fără nume',
-              descriere: attrs.Descrierescurta || 'O floare deosebită pentru momente speciale.',
-              categorie: attrs.Categorie || 'Altele',
-              pret: attrs.pret || 125, // Fallback dacă nu ai setat preț în Strapi
-              imagine: attrs.Imagine?.url ? `http://localhost:1337${attrs.Imagine.url}` : '/imagini/buchet_lalele_roz.jpg',
-              detalii: attrs.Descrierescurta || 'Nu există detalii suplimentare.'
+              id:         item.id,
+              nume:       a.Nume        || 'Produs',
+              descriere:  a.Descriere   || '',
+              pret:       a.Pret        || 0,
+              pretVechi:  a.PretVechi   || null,
+              eticheta:   a.Eticheta    || null,
+              isFeatured: a.IsFeatured  || false,
+              imagine:    imgUrl,
+              categorie:  catData?.Nume || 'Altele',
             };
           });
-
-          setListaProduse(produseMapate);
-
-          // Generare automată și unică de categorii din Strapi
-          const categoriiExtrase = produseMapate.map(p => p.categorie);
-          const categoriiUnice = ['Toate', ...new Set(categoriiExtrase)];
-          setCategoriiDinamice(categoriiUnice);
+          setListaProduse(mapped);
+        }
+        if (catRes.data) {
+          const cats = catRes.data.map(c => {
+            const a = c.attributes || c;
+            return { id: c.id, nume: a.Nume };
+          });
+          setCategorii(cats);
         }
         setLoading(false);
       })
-      .catch((error) => {
-        console.error("Eroare Strapi:", error);
-        setLoading(false);
-      });
+      .catch(err => { console.error(err); setLoading(false); });
   }, []);
 
-  // Logică de Filtrare, Căutare și Sortare
+  /* ── filtrare + sortare ── */
   const produseFiltrate = listaProduse
-    .filter((produs) => {
-      const sePotrivesteCategoria = selectedCategory === 'Toate' || produs.categorie === selectedCategory;
-      const sePotrivesteCautarea = produs.nume.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                                   produs.descriere.toLowerCase().includes(searchQuery.toLowerCase());
-      return sePotrivesteCategoria && sePotrivesteCautarea;
+    .filter(p => {
+      const catOk    = !selectedCategory || selectedCategory === 'Toate' || p.categorie === selectedCategory;
+      const searchOk = !searchQuery || p.nume.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                       p.descriere.toLowerCase().includes(searchQuery.toLowerCase());
+      return catOk && searchOk;
     })
     .sort((a, b) => {
-      if (optiuneSortare === 'pret-crescator') return a.pret - b.pret;
+      if (optiuneSortare === 'pret-crescator')   return a.pret - b.pret;
       if (optiuneSortare === 'pret-descrescator') return b.pret - a.pret;
       return 0;
     });
 
-  const adaugaInCos = (produs) => {
-    setCartCount((prev) => prev + 1);
-    alert(`${produs.nume} a fost adăugat în coș!`);
+  const adaugaInCos = (produs, e) => {
+    e?.stopPropagation();
+    setCartCount(prev => prev + 1);
   };
 
-  if (loading) {
-    return (
-      <div className="flex flex-col items-center justify-center py-32 bg-transparent">
-        <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-zinc-900 dark:border-white mb-4"></div>
-        <p className="text-zinc-500 dark:text-zinc-400 text-sm font-medium">Se deschid petalele bazei de date...</p>
-      </div>
-    );
-  }
+  /* ── badge color per eticheta ── */
+  const badgeStyle = (eticheta) => {
+    const map = {
+      'Nou':        { bg: '#dcfce7', color: '#16a34a' },
+      'Reducere':   { bg: '#fee2e2', color: '#dc2626' },
+      'Popular':    { bg: '#fef9c3', color: '#ca8a04' },
+      'Limitat':    { bg: '#ede9fe', color: '#7c3aed' },
+    };
+    return map[eticheta] || { bg: '#f1f5f9', color: '#64748b' };
+  };
 
+  /* ────────── LOADING ────────── */
+  if (loading) return (
+    <div style={{ display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'center', padding:'80px 0', gap:16 }}>
+      <div style={{
+        width:44, height:44, borderRadius:'50%',
+        border:'3px solid #e2e8f0', borderTopColor:'#0f172a',
+        animation:'spin 0.8s linear infinite'
+      }}/>
+      <p style={{ color:'#94a3b8', fontSize:13, letterSpacing:'0.05em' }}>Se încarcă produsele…</p>
+      <style>{`@keyframes spin{to{transform:rotate(360deg)}}`}</style>
+    </div>
+  );
+
+  const categoriiFiltru = ['Toate', ...categorii.map(c => c.nume)];
+
+  /* ────────── RENDER ────────── */
   return (
-    <div className="bg-transparent py-12 px-6 max-w-7xl mx-auto">
-      
-      {/* Meniu Filtre Categorii Dinamice */}
-      <div className="flex flex-col sm:flex-row justify-between items-center gap-4 mb-12 border-b border-zinc-200 dark:border-zinc-800 pb-6">
-        <div className="flex flex-wrap gap-2 justify-center">
-          {categoriiDinamice.map((categorie) => (
-            <button
-              key={categorie}
-              onClick={() => setSelectedCategory(categorie)}
-              className={`px-4 py-1.5 rounded-full text-xs font-semibold tracking-wide transition-all duration-200 ${
-                selectedCategory === categorie
-                  ? 'bg-zinc-950 text-white dark:bg-white dark:text-zinc-950 shadow-sm'
-                  : 'bg-white text-zinc-600 hover:bg-zinc-100 dark:bg-zinc-800 dark:text-zinc-300 dark:hover:bg-zinc-700 border border-zinc-200 dark:border-zinc-700'
-              }`}
-            >
-              {categorie}
-            </button>
-          ))}
+    <div style={{ maxWidth:1280, margin:'0 auto', padding:'48px 24px', fontFamily:"'Helvetica Neue', Arial, sans-serif" }}>
+
+      {/* ── Bara filtre ── */}
+      <div style={{ display:'flex', flexWrap:'wrap', alignItems:'center', justifyContent:'space-between', gap:16, marginBottom:40, paddingBottom:24, borderBottom:'1px solid #f1f5f9' }}>
+
+        {/* Butoane categorii */}
+        <div style={{ display:'flex', flexWrap:'wrap', gap:8 }}>
+          {categoriiFiltru.map(cat => {
+            const activ = (selectedCategory || 'Toate') === cat;
+            return (
+              <button key={cat} onClick={() => setSelectedCategory(cat)}
+                style={{
+                  padding:'7px 18px', borderRadius:999, fontSize:12, fontWeight:600,
+                  letterSpacing:'0.06em', textTransform:'uppercase', cursor:'pointer',
+                  border: activ ? '1.5px solid #0f172a' : '1.5px solid #e2e8f0',
+                  background: activ ? '#0f172a' : '#fff',
+                  color:      activ ? '#fff'    : '#64748b',
+                  transition:'all 0.18s',
+                }}>
+                {cat}
+              </button>
+            );
+          })}
         </div>
 
-        {/* Filtru Sortare */}
-        <select
-          value={optiuneSortare}
-          onChange={(e) => setOptiuneSortare(e.target.value)}
-          className="bg-white dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 text-zinc-700 dark:text-zinc-300 px-3 py-1.5 rounded-xl text-xs font-medium focus:outline-none"
-        >
+        {/* Sortare */}
+        <select value={optiuneSortare} onChange={e => setOptiuneSortare(e.target.value)}
+          style={{
+            padding:'7px 14px', borderRadius:10, fontSize:12, fontWeight:500,
+            border:'1.5px solid #e2e8f0', background:'#fff', color:'#374151',
+            cursor:'pointer', outline:'none',
+          }}>
           <option value="implicit">Sortare implicită</option>
           <option value="pret-crescator">Preț: Mic → Mare</option>
           <option value="pret-descrescator">Preț: Mare → Mic</option>
         </select>
       </div>
 
-      {/* Grid Produse */}
+      {/* ── Grid produse ── */}
       {produseFiltrate.length === 0 ? (
-        <div className="text-center py-16 text-zinc-400 text-sm">Nicio floare găsită în această selecție.</div>
+        <div style={{ textAlign:'center', padding:'80px 0', color:'#94a3b8', fontSize:14 }}>
+          Niciun produs găsit.
+        </div>
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
-          {produseFiltrate.map((produs) => (
-            <div key={produs.id} className="bg-white dark:bg-zinc-800 border border-zinc-100 dark:border-zinc-700/50 rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-all duration-300 flex flex-col group">
-              <div className="relative overflow-hidden bg-zinc-100 dark:bg-zinc-900 pt-[100%] cursor-pointer" onClick={() => setProdusSelectat(produs)}>
-                <img src={produs.imagine} alt={produs.nume} className="absolute inset-0 w-full h-full object-cover group-hover:scale-102 transition-transform duration-300" />
-              </div>
-              <div className="p-5 flex flex-col flex-grow">
-                <span className="text-[10px] font-bold uppercase tracking-widest text-zinc-400 mb-1">{produs.categorie}</span>
-                <h3 className="font-serif text-base text-zinc-900 dark:text-white mb-2 cursor-pointer hover:opacity-80" onClick={() => setProdusSelectat(produs)}>{produs.nume}</h3>
-                <p className="text-zinc-500 dark:text-zinc-400 text-xs line-clamp-2 mb-4 flex-grow">{produs.descriere}</p>
-                <div className="flex justify-between items-center pt-3 border-t border-zinc-50 dark:border-zinc-700/50">
-                  <span className="text-base font-bold text-zinc-900 dark:text-white">{produs.pret} lei</span>
-                  <button onClick={() => adaugaInCos(produs)} className="bg-zinc-900 hover:bg-zinc-800 dark:bg-white dark:text-zinc-900 dark:hover:bg-zinc-100 text-white text-[11px] font-bold px-3 py-2 rounded-lg shadow-sm">
-                    Adaugă
-                  </button>
+        <div style={{
+          display:'grid',
+          gridTemplateColumns:'repeat(auto-fill, minmax(260px, 1fr))',
+          gap:28,
+        }}>
+          {produseFiltrate.map(produs => {
+            const isHovered = hoveredId === produs.id;
+            const badge     = produs.eticheta ? badgeStyle(produs.eticheta) : null;
+            return (
+              <div key={produs.id}
+                onMouseEnter={() => setHoveredId(produs.id)}
+                onMouseLeave={() => setHoveredId(null)}
+                onClick={() => setProdusSelectat(produs)}
+                style={{
+                  background:'#fff',
+                  borderRadius:20,
+                  overflow:'hidden',
+                  border:'1px solid #f1f5f9',
+                  boxShadow: isHovered ? '0 20px 50px -10px rgba(0,0,0,0.13)' : '0 2px 12px rgba(0,0,0,0.05)',
+                  transform: isHovered ? 'translateY(-5px)' : 'none',
+                  transition:'all 0.28s cubic-bezier(0.34,1.56,0.64,1)',
+                  cursor:'pointer',
+                  display:'flex', flexDirection:'column',
+                }}>
+
+                {/* Imagine */}
+                <div style={{ position:'relative', paddingTop:'85%', background:'#f8fafc', overflow:'hidden' }}>
+                  {produs.imagine ? (
+                    <img src={produs.imagine} alt={produs.nume}
+                      style={{
+                        position:'absolute', inset:0, width:'100%', height:'100%',
+                        objectFit:'cover',
+                        transform: isHovered ? 'scale(1.07)' : 'scale(1)',
+                        transition:'transform 0.45s ease',
+                      }}/>
+                  ) : (
+                    <div style={{
+                      position:'absolute', inset:0, display:'flex', alignItems:'center',
+                      justifyContent:'center', color:'#cbd5e1', fontSize:42,
+                    }}>🖼</div>
+                  )}
+
+                  {/* Badge eticheta */}
+                  {badge && produs.eticheta && (
+                    <span style={{
+                      position:'absolute', top:12, left:12,
+                      padding:'4px 10px', borderRadius:999, fontSize:10,
+                      fontWeight:700, letterSpacing:'0.08em', textTransform:'uppercase',
+                      background: badge.bg, color: badge.color,
+                    }}>
+                      {produs.eticheta}
+                    </span>
+                  )}
+
+                  {/* Pret vechi badge */}
+                  {produs.pretVechi && (
+                    <span style={{
+                      position:'absolute', top:12, right:12,
+                      padding:'4px 10px', borderRadius:999, fontSize:10,
+                      fontWeight:700, background:'#dc2626', color:'#fff',
+                    }}>
+                      -{Math.round((1 - produs.pret / produs.pretVechi) * 100)}%
+                    </span>
+                  )}
+                </div>
+
+                {/* Content */}
+                <div style={{ padding:'18px 20px 20px', display:'flex', flexDirection:'column', flexGrow:1 }}>
+                  <span style={{ fontSize:10, fontWeight:700, letterSpacing:'0.1em', textTransform:'uppercase', color:'#94a3b8', marginBottom:6 }}>
+                    {produs.categorie}
+                  </span>
+                  <h3 style={{ fontSize:15, fontWeight:700, color:'#0f172a', margin:'0 0 8px', lineHeight:1.35 }}>
+                    {produs.nume}
+                  </h3>
+                  {produs.descriere && (
+                    <p style={{ fontSize:12, color:'#64748b', lineHeight:1.6, margin:'0 0 16px',
+                      display:'-webkit-box', WebkitLineClamp:2, WebkitBoxOrient:'vertical', overflow:'hidden' }}>
+                      {produs.descriere}
+                    </p>
+                  )}
+
+                  {/* Pret + buton */}
+                  <div style={{ marginTop:'auto', display:'flex', alignItems:'center', justifyContent:'space-between', paddingTop:14, borderTop:'1px solid #f1f5f9' }}>
+                    <div>
+                      <span style={{ fontSize:18, fontWeight:800, color:'#0f172a' }}>{produs.pret} lei</span>
+                      {produs.pretVechi && (
+                        <span style={{ fontSize:12, color:'#94a3b8', textDecoration:'line-through', marginLeft:7 }}>
+                          {produs.pretVechi} lei
+                        </span>
+                      )}
+                    </div>
+                    <button
+                      onClick={e => adaugaInCos(produs, e)}
+                      style={{
+                        background:'#0f172a', color:'#fff', border:'none',
+                        padding:'9px 16px', borderRadius:12, fontSize:11,
+                        fontWeight:700, cursor:'pointer', letterSpacing:'0.04em',
+                        transition:'background 0.18s, transform 0.15s',
+                      }}
+                      onMouseEnter={e => e.currentTarget.style.background='#1e293b'}
+                      onMouseLeave={e => e.currentTarget.style.background='#0f172a'}
+                    >
+                      + Coș
+                    </button>
+                  </div>
                 </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       )}
 
-      {/* Modal Pop-up Detalii */}
+      {/* ── Modal detalii produs ── */}
       {produsSelectat && (
-        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="bg-white dark:bg-zinc-800 rounded-2xl max-w-xl w-full overflow-hidden shadow-2xl relative flex flex-col md:flex-row border dark:border-zinc-700">
-            <button onClick={() => setProdusSelectat(null)} className="absolute top-3 right-3 bg-white dark:bg-zinc-700 text-zinc-800 dark:text-white p-1.5 rounded-full z-10 shadow text-xs">✕</button>
-            <div className="w-full md:w-1/2 bg-zinc-100 dark:bg-zinc-900"><img src={produsSelectat.imagine} alt={produsSelectat.nume} className="w-full h-full object-cover min-h-[220px]" /></div>
-            <div className="w-full md:w-1/2 p-6 flex flex-col justify-between">
+        <div
+          onClick={() => setProdusSelectat(null)}
+          style={{
+            position:'fixed', inset:0, background:'rgba(0,0,0,0.55)',
+            backdropFilter:'blur(6px)', zIndex:50,
+            display:'flex', alignItems:'center', justifyContent:'center', padding:24,
+          }}>
+          <div
+            onClick={e => e.stopPropagation()}
+            style={{
+              background:'#fff', borderRadius:24, maxWidth:640, width:'100%',
+              overflow:'hidden', boxShadow:'0 40px 80px rgba(0,0,0,0.25)',
+              display:'flex', flexDirection:'row',
+              animation:'modalIn 0.28s cubic-bezier(0.34,1.56,0.64,1)',
+            }}>
+            <style>{`@keyframes modalIn{from{opacity:0;transform:scale(0.92)}to{opacity:1;transform:scale(1)}}`}</style>
+
+            {/* Imagine modal */}
+            <div style={{ width:'45%', minHeight:320, background:'#f8fafc', flexShrink:0, position:'relative' }}>
+              {produsSelectat.imagine ? (
+                <img src={produsSelectat.imagine} alt={produsSelectat.nume}
+                  style={{ width:'100%', height:'100%', objectFit:'cover', position:'absolute', inset:0 }}/>
+              ) : (
+                <div style={{ display:'flex', alignItems:'center', justifyContent:'center', height:'100%', fontSize:56, color:'#e2e8f0' }}>🖼</div>
+              )}
+            </div>
+
+            {/* Info modal */}
+            <div style={{ padding:'32px 28px', display:'flex', flexDirection:'column', justifyContent:'space-between', flexGrow:1 }}>
               <div>
-                <span className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest">{produsSelectat.categorie}</span>
-                <h2 className="font-serif text-xl text-zinc-900 dark:text-white mt-1 mb-3">{produsSelectat.nume}</h2>
-                <p className="text-zinc-600 dark:text-zinc-300 text-xs leading-relaxed mb-4">{produsSelectat.detalii}</p>
+                <button onClick={() => setProdusSelectat(null)}
+                  style={{ position:'absolute', top:16, right:16, background:'#f1f5f9', border:'none', borderRadius:'50%', width:32, height:32, cursor:'pointer', fontSize:14, color:'#64748b' }}>
+                  ✕
+                </button>
+                <span style={{ fontSize:10, fontWeight:700, letterSpacing:'0.1em', textTransform:'uppercase', color:'#94a3b8' }}>
+                  {produsSelectat.categorie}
+                </span>
+                <h2 style={{ fontSize:22, fontWeight:800, color:'#0f172a', margin:'8px 0 16px', lineHeight:1.3 }}>
+                  {produsSelectat.nume}
+                </h2>
+                {produsSelectat.eticheta && (
+                  <span style={{
+                    display:'inline-block', marginBottom:12,
+                    padding:'4px 12px', borderRadius:999, fontSize:10, fontWeight:700,
+                    letterSpacing:'0.08em', textTransform:'uppercase',
+                    ...badgeStyle(produsSelectat.eticheta),
+                  }}>
+                    {produsSelectat.eticheta}
+                  </span>
+                )}
+                <p style={{ fontSize:13, color:'#64748b', lineHeight:1.75 }}>
+                  {produsSelectat.descriere || 'Nicio descriere disponibilă.'}
+                </p>
               </div>
-              <div>
-                <div className="text-xl font-bold text-zinc-900 dark:text-white mb-3">{produsSelectat.pret} lei</div>
-                <button onClick={() => { adaugaInCos(produsSelectat); setProdusSelectat(null); }} className="w-full bg-zinc-900 dark:bg-white dark:text-zinc-900 text-white py-2 rounded-xl font-semibold text-xs shadow">Adaugă în coș</button>
+
+              <div style={{ marginTop:24 }}>
+                <div style={{ display:'flex', alignItems:'baseline', gap:10, marginBottom:16 }}>
+                  <span style={{ fontSize:26, fontWeight:800, color:'#0f172a' }}>{produsSelectat.pret} lei</span>
+                  {produsSelectat.pretVechi && (
+                    <span style={{ fontSize:14, color:'#94a3b8', textDecoration:'line-through' }}>{produsSelectat.pretVechi} lei</span>
+                  )}
+                </div>
+                <button
+                  onClick={e => { adaugaInCos(produsSelectat, e); setProdusSelectat(null); }}
+                  style={{
+                    width:'100%', background:'#0f172a', color:'#fff', border:'none',
+                    padding:'13px', borderRadius:14, fontSize:13, fontWeight:700,
+                    cursor:'pointer', letterSpacing:'0.04em', transition:'background 0.18s',
+                  }}
+                  onMouseEnter={e => e.currentTarget.style.background='#1e293b'}
+                  onMouseLeave={e => e.currentTarget.style.background='#0f172a'}
+                >
+                  Adaugă în coș
+                </button>
               </div>
             </div>
           </div>
         </div>
       )}
-
     </div>
   );
 }

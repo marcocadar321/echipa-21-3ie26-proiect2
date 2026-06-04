@@ -3,7 +3,7 @@ import React, { useState, useEffect, useRef } from 'react';
 // ─── Constante ────────────────────────────────────────────────────────────────
 const STRAPI_URL = 'http://localhost:1337';
 
-// ─── Icoane SVG (dimensiuni fixe px, compatibil Tailwind 4) ──────────────────
+// ─── Icoane SVG ───────────────────────────────────────────────────────────────
 const IcoCart = () => (
   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
     <circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/>
@@ -46,38 +46,43 @@ const IcoArrow = () => (
   </svg>
 );
 
-// ─── Helpers ──────────────────────────────────────────────────────────────────
-const getImageUrl = (attrs) => {
-  const imgData = attrs?.Imagine?.data ?? attrs?.Imagine;
+// ─── Helpers (Strapi v5 — fără .attributes) ───────────────────────────────────
+const getImageUrl = (item) => {
+  // Strapi v5: câmpurile sunt direct pe item
+  const imgData = item?.Imagine ?? item?.imagine;
   if (!imgData) return null;
-  const imgAttrs = imgData.attributes ?? imgData;
   const url =
-    imgAttrs?.formats?.medium?.url ??
-    imgAttrs?.formats?.small?.url ??
-    imgAttrs?.url ??
+    imgData?.formats?.medium?.url ??
+    imgData?.formats?.small?.url ??
+    imgData?.url ??
     null;
   if (!url) return null;
   return url.startsWith('http') ? url : `${STRAPI_URL}${url}`;
 };
 
 const mapArticle = (item) => {
-  const attrs = item.attributes ?? item;
+  // Strapi v5: câmpurile sunt direct pe item, nu în item.attributes
+  const catRaw = item?.Categorii ?? item?.categorii;
+  const catNume =
+    catRaw?.Nume ?? catRaw?.nume ??
+    catRaw?.data?.attributes?.Nume ?? // fallback v4
+    'Altele';
+
   return {
     id: item.id,
     documentId: item.documentId ?? null,
-    nume: attrs.Titlu ?? 'Produs fără nume',
-    descriere: attrs.Descrierescurta ?? 'O floare deosebită pentru momente speciale.',
-    categorie: attrs.Categorie ?? 'Altele',
-    pret: attrs.pret ?? 125,
-    pretVechi: attrs.pretVechi ?? null,
-    stoc: attrs.stoc ?? null,
-    rating: attrs.rating ?? 4,
-    imagine: getImageUrl(attrs) ?? 'https://images.unsplash.com/photo-1490750967868-88df5691cc45?w=600&q=80',
+    nume: item.Nume ?? item.nume ?? 'Produs fără nume',
+    descriere: item.Descriere ?? item.descriere ?? 'O floare deosebită pentru momente speciale.',
+    categorie: catNume,
+    pret: item.Pret ?? item.pret ?? 0,
+    pretVechi: item.PretVechi ?? item.pretVechi ?? null,
+    stoc: item.stoc ?? item.Stoc ?? null,
+    rating: item.rating ?? item.Rating ?? 4,
+    imagine: getImageUrl(item) ?? 'https://images.unsplash.com/photo-1490750967868-88df5691cc45?w=600&q=80',
   };
 };
 
 // ─── Sub-componente ───────────────────────────────────────────────────────────
-
 const Stele = ({ rating = 4 }) => (
   <div style={{ display: 'flex', gap: 2 }}>
     {[1,2,3,4,5].map(i => <IcoStar key={i} filled={i <= rating} />)}
@@ -87,9 +92,9 @@ const Stele = ({ rating = 4 }) => (
 const BadgeStoc = ({ stoc }) => {
   if (stoc === undefined || stoc === null) return null;
   const cfg =
-    stoc <= 0  ? { text: 'Epuizat',       cls: 'bg-red-100 text-red-600 border-red-200' } :
+    stoc <= 0  ? { text: 'Epuizat',         cls: 'bg-red-100 text-red-600 border-red-200' } :
     stoc <= 5  ? { text: `Ultimele ${stoc}`, cls: 'bg-amber-100 text-amber-700 border-amber-200' } :
-                 { text: 'În stoc',        cls: 'bg-emerald-100 text-emerald-700 border-emerald-200' };
+                 { text: 'În stoc',          cls: 'bg-emerald-100 text-emerald-700 border-emerald-200' };
   return (
     <span className={`absolute top-3 left-3 text-[9px] font-black uppercase tracking-widest px-2 py-0.5 rounded-full border ${cfg.cls}`}>
       {cfg.text}
@@ -132,7 +137,6 @@ const Card = ({ produs, onDetalii, onAdauga, favorit, onFavorit }) => {
 
   return (
     <article className="group relative bg-white dark:bg-zinc-900 border border-zinc-100 dark:border-zinc-800 rounded-3xl overflow-hidden shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-500 flex flex-col">
-
       {/* Imagine */}
       <div
         className="relative overflow-hidden bg-zinc-50 dark:bg-zinc-800 cursor-pointer"
@@ -145,12 +149,8 @@ const Card = ({ produs, onDetalii, onAdauga, favorit, onFavorit }) => {
           onError={() => setImgErr(true)}
           className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
         />
-        {/* Gradient overlay */}
         <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-400 pointer-events-none" />
-
         <BadgeStoc stoc={produs.stoc} />
-
-        {/* Favorit */}
         <button
           onClick={(e) => { e.stopPropagation(); onFavorit(produs.id); }}
           className={`absolute top-3 right-3 w-8 h-8 rounded-full flex items-center justify-center shadow transition-all duration-200 ${
@@ -159,8 +159,6 @@ const Card = ({ produs, onDetalii, onAdauga, favorit, onFavorit }) => {
         >
           <IcoHeart filled={favorit} />
         </button>
-
-        {/* Quick view */}
         <div className="absolute bottom-3 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 translate-y-2 group-hover:translate-y-0 transition-all duration-300 pointer-events-none group-hover:pointer-events-auto">
           <button
             onClick={() => onDetalii(produs)}
@@ -177,18 +175,15 @@ const Card = ({ produs, onDetalii, onAdauga, favorit, onFavorit }) => {
           <span className="text-[9px] font-black uppercase tracking-[0.2em] text-rose-400">{produs.categorie}</span>
           <Stele rating={produs.rating} />
         </div>
-
         <h3
           className="font-serif text-[15px] leading-snug text-zinc-900 dark:text-white mb-2 cursor-pointer hover:text-rose-600 dark:hover:text-rose-400 transition-colors line-clamp-2"
           onClick={() => onDetalii(produs)}
         >
           {produs.nume}
         </h3>
-
         <p className="text-zinc-500 dark:text-zinc-400 text-[11px] leading-relaxed line-clamp-2 mb-4 flex-grow">
           {produs.descriere}
         </p>
-
         <div className="flex items-center justify-between pt-3 border-t border-zinc-100 dark:border-zinc-800">
           <div>
             <span className="text-lg font-black text-zinc-900 dark:text-white">{produs.pret} lei</span>
@@ -196,7 +191,6 @@ const Card = ({ produs, onDetalii, onAdauga, favorit, onFavorit }) => {
               <span className="ml-1.5 text-xs text-zinc-400 line-through">{produs.pretVechi} lei</span>
             )}
           </div>
-
           <button
             onClick={handleAdauga}
             disabled={produs.stoc === 0}
@@ -242,15 +236,12 @@ const Modal = ({ produs, onClose, onAdauga, favorit, onFavorit }) => {
         className="bg-white dark:bg-zinc-900 rounded-3xl max-w-2xl w-full overflow-hidden shadow-2xl border border-zinc-100 dark:border-zinc-800 flex flex-col md:flex-row relative"
         style={{ animation: 'slideUp .3s ease' }}
       >
-        {/* Close */}
         <button
           onClick={onClose}
           className="absolute top-4 right-4 z-20 w-8 h-8 bg-zinc-100 dark:bg-zinc-700 hover:bg-zinc-200 dark:hover:bg-zinc-600 text-zinc-700 dark:text-white rounded-full flex items-center justify-center transition-colors"
         >
           <IcoClose />
         </button>
-
-        {/* Imagine */}
         <div className="relative w-full md:w-1/2 min-h-[260px] bg-zinc-50 dark:bg-zinc-800 flex-shrink-0">
           <img
             src={imgErr ? 'https://images.unsplash.com/photo-1490750967868-88df5691cc45?w=600&q=80' : produs.imagine}
@@ -271,8 +262,6 @@ const Modal = ({ produs, onClose, onAdauga, favorit, onFavorit }) => {
             <IcoHeart filled={favorit} />
           </button>
         </div>
-
-        {/* Detalii */}
         <div className="w-full md:w-1/2 p-7 flex flex-col justify-between gap-4">
           <div>
             <div className="flex items-center gap-2 mb-2">
@@ -281,8 +270,6 @@ const Modal = ({ produs, onClose, onAdauga, favorit, onFavorit }) => {
             </div>
             <h2 className="font-serif text-2xl text-zinc-900 dark:text-white leading-tight mb-3">{produs.nume}</h2>
             <p className="text-zinc-500 dark:text-zinc-400 text-sm leading-relaxed mb-5">{produs.descriere}</p>
-
-            {/* Detalii extra */}
             <div className="grid grid-cols-2 gap-2">
               {[
                 ['Livrare', '24h'],
@@ -297,7 +284,6 @@ const Modal = ({ produs, onClose, onAdauga, favorit, onFavorit }) => {
               ))}
             </div>
           </div>
-
           <div>
             <div className="flex items-baseline gap-2 mb-4">
               <span className="text-3xl font-black text-zinc-900 dark:text-white">{produs.pret} lei</span>
@@ -327,7 +313,6 @@ const CosDrawer = ({ open, onClose, items, onRemove, onClear }) => {
 
   return (
     <>
-      {/* Backdrop */}
       {open && (
         <div
           className="fixed inset-0 bg-black/50 z-40 backdrop-blur-sm"
@@ -335,14 +320,11 @@ const CosDrawer = ({ open, onClose, items, onRemove, onClear }) => {
           style={{ animation: 'fadeIn .2s ease' }}
         />
       )}
-
-      {/* Drawer */}
       <div
         className={`fixed top-0 right-0 h-full w-full max-w-sm bg-white dark:bg-zinc-900 z-50 shadow-2xl flex flex-col transition-transform duration-400 ease-in-out ${
           open ? 'translate-x-0' : 'translate-x-full'
         }`}
       >
-        {/* Header */}
         <div className="flex items-center justify-between px-6 py-5 border-b border-zinc-100 dark:border-zinc-800">
           <div>
             <h2 className="font-serif text-lg text-zinc-900 dark:text-white">Coșul tău</h2>
@@ -352,8 +334,6 @@ const CosDrawer = ({ open, onClose, items, onRemove, onClear }) => {
             <IcoClose />
           </button>
         </div>
-
-        {/* Items */}
         <div className="flex-1 overflow-y-auto px-6 py-4 space-y-4">
           {items.length === 0 ? (
             <div className="flex flex-col items-center justify-center h-full text-center py-16">
@@ -387,8 +367,6 @@ const CosDrawer = ({ open, onClose, items, onRemove, onClear }) => {
             ))
           )}
         </div>
-
-        {/* Footer */}
         {items.length > 0 && (
           <div className="px-6 py-5 border-t border-zinc-100 dark:border-zinc-800 space-y-3">
             <div className="flex justify-between text-sm">
@@ -419,15 +397,16 @@ export default function Meniu({ setCartCount }) {
   const [sortare, setSortare] = useState('implicit');
   const [produsSelectat, setProdusSelectat] = useState(null);
   const [favorite, setFavorite] = useState(new Set());
-  const [cos, setCos] = useState([]); // [{ ...produs, qty }]
+  const [cos, setCos] = useState([]);
   const [cosOpen, setCosOpen] = useState(false);
   const [toast, setToast] = useState(null);
   const [sortOpen, setSortOpen] = useState(false);
   const sortRef = useRef(null);
 
-  // ── Fetch Strapi ────────────────────────────────────────────────────────
+  // ── Fetch Strapi v5 ─────────────────────────────────────────────────────
   useEffect(() => {
-    fetch(`${STRAPI_URL}/api/articles?populate=*`)
+    // populate=* aduce toate relațiile și media în Strapi v5
+    fetch(`${STRAPI_URL}/api/produses?populate=Imagine&populate=categorii`)
       .then(r => {
         if (!r.ok) throw new Error(`Eroare server: ${r.status}`);
         return r.json();
@@ -436,7 +415,7 @@ export default function Meniu({ setCartCount }) {
         if (!json.data) throw new Error('Răspuns invalid de la Strapi');
         const mapped = json.data.map(mapArticle);
         setProduse(mapped);
-        const cats = ['Toate', ...new Set(mapped.map(p => p.categorie))];
+        const cats = ['Toate', ...new Set(mapped.map(p => p.categorie).filter(Boolean))];
         setCategorii(cats);
         setLoading(false);
       })
@@ -505,12 +484,16 @@ export default function Meniu({ setCartCount }) {
     'nume': 'Nume A–Z',
   }[sortare];
 
+  const toggleFavorit = (id) => setFavorite(prev => {
+    const n = new Set(prev);
+    n.has(id) ? n.delete(id) : n.add(id);
+    return n;
+  });
+
   // ── Loading ──────────────────────────────────────────────────────────────
   if (loading) return (
     <div className="py-12 px-4 sm:px-6 max-w-7xl mx-auto">
-      {/* Hero skeleton */}
       <div className="h-48 bg-zinc-100 dark:bg-zinc-800 rounded-3xl animate-pulse mb-10" />
-      {/* Categorii skeleton */}
       <div className="flex gap-2 mb-8">
         {[1,2,3,4].map(i => <div key={i} className="h-8 w-24 bg-zinc-100 dark:bg-zinc-800 rounded-full animate-pulse" />)}
       </div>
@@ -528,7 +511,7 @@ export default function Meniu({ setCartCount }) {
       <p className="text-zinc-400 text-sm mb-4">{eroare}</p>
       <div className="bg-zinc-50 dark:bg-zinc-800 rounded-2xl p-4 text-left text-xs text-zinc-400 font-mono space-y-1">
         <p>✓ Strapi rulează pe <strong className="text-zinc-700 dark:text-zinc-200">localhost:1337</strong>?</p>
-        <p>✓ Colecția <strong className="text-zinc-700 dark:text-zinc-200">Article</strong> este publicată?</p>
+        <p>✓ Colecția <strong className="text-zinc-700 dark:text-zinc-200">Produse</strong> este publicată?</p>
         <p>✓ Rolul <strong className="text-zinc-700 dark:text-zinc-200">Public</strong> are <strong className="text-zinc-700 dark:text-zinc-200">find</strong> + <strong className="text-zinc-700 dark:text-zinc-200">findOne</strong> bifat?</p>
       </div>
     </div>
@@ -543,7 +526,7 @@ export default function Meniu({ setCartCount }) {
         @keyframes toastIn { from { opacity:0; transform:translateX(-50%) translateY(20px) } to { opacity:1; transform:translateX(-50%) translateY(0) } }
       `}</style>
 
-      {/* ── Toast notificare ──────────────────────────────────────────── */}
+      {/* Toast */}
       {toast && (
         <div
           className="fixed bottom-6 left-1/2 z-50 bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 text-sm font-semibold px-5 py-3 rounded-2xl shadow-2xl flex items-center gap-2"
@@ -555,12 +538,10 @@ export default function Meniu({ setCartCount }) {
         </div>
       )}
 
-      {/* ── Hero Banner ───────────────────────────────────────────────── */}
+      {/* Hero Banner */}
       <div className="relative overflow-hidden bg-gradient-to-br from-rose-50 via-pink-50 to-zinc-100 dark:from-zinc-900 dark:via-zinc-900 dark:to-zinc-900 px-4 sm:px-6 pt-12 pb-14">
-        {/* Decorative blobs */}
         <div className="absolute -top-10 -right-10 w-64 h-64 bg-rose-200/40 dark:bg-rose-900/20 rounded-full blur-3xl pointer-events-none" />
         <div className="absolute -bottom-10 -left-10 w-48 h-48 bg-pink-200/40 dark:bg-pink-900/20 rounded-full blur-3xl pointer-events-none" />
-
         <div className="max-w-7xl mx-auto relative">
           <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-6">
             <div>
@@ -575,8 +556,6 @@ export default function Meniu({ setCartCount }) {
                 Flori proaspete, aranjate cu grijă, livrate în 24 de ore oriunde în oraș.
               </p>
             </div>
-
-            {/* Stats + Buton coș */}
             <div className="flex items-center gap-4 flex-shrink-0">
               <div className="hidden sm:flex gap-6">
                 {[
@@ -591,8 +570,6 @@ export default function Meniu({ setCartCount }) {
                   </div>
                 ))}
               </div>
-
-              {/* Buton coș */}
               <button
                 onClick={() => setCosOpen(true)}
                 className="relative bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 px-5 py-3 rounded-2xl font-bold text-sm flex items-center gap-2 hover:bg-rose-600 dark:hover:bg-rose-500 dark:hover:text-white transition-all duration-300 shadow-lg"
@@ -610,11 +587,9 @@ export default function Meniu({ setCartCount }) {
         </div>
       </div>
 
-      {/* ── Bara de filtre sticky ─────────────────────────────────────── */}
+      {/* Bara de filtre sticky */}
       <div className="sticky top-0 z-30 bg-white/90 dark:bg-zinc-900/90 backdrop-blur-md border-b border-zinc-100 dark:border-zinc-800 shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 py-3 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
-
-          {/* Categorii scroll */}
           <div className="flex gap-2 overflow-x-auto pb-0.5 scrollbar-hide flex-1">
             {categorii.map(cat => (
               <button
@@ -630,10 +605,7 @@ export default function Meniu({ setCartCount }) {
               </button>
             ))}
           </div>
-
-          {/* Dreapta: search + sort + contor */}
           <div className="flex items-center gap-2 flex-shrink-0">
-            {/* Search input */}
             <div className="relative">
               <span className="absolute left-3 top-1/2 -translate-y-1/2 text-zinc-400 pointer-events-none">
                 <IcoSearch />
@@ -654,8 +626,6 @@ export default function Meniu({ setCartCount }) {
                 </button>
               )}
             </div>
-
-            {/* Dropdown sortare custom */}
             <div className="relative" ref={sortRef}>
               <button
                 onClick={() => setSortOpen(o => !o)}
@@ -689,8 +659,6 @@ export default function Meniu({ setCartCount }) {
                 </div>
               )}
             </div>
-
-            {/* Contor */}
             <span className="hidden sm:block text-[11px] text-zinc-400 bg-zinc-100 dark:bg-zinc-800 px-2.5 py-1.5 rounded-xl font-medium">
               {filtrate.length} {filtrate.length === 1 ? 'produs' : 'produse'}
             </span>
@@ -698,10 +666,8 @@ export default function Meniu({ setCartCount }) {
         </div>
       </div>
 
-      {/* ── Conținut principal ────────────────────────────────────────── */}
+      {/* Conținut principal */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 py-10">
-
-        {/* Secțiuni pe categorie (când "Toate" e selectat) */}
         {catActiva === 'Toate' && !search ? (
           <div className="space-y-14">
             {categorii.filter(c => c !== 'Toate').map(cat => {
@@ -709,7 +675,6 @@ export default function Meniu({ setCartCount }) {
               if (prodCat.length === 0) return null;
               return (
                 <section key={cat}>
-                  {/* Header secțiune */}
                   <div className="flex items-center justify-between mb-6">
                     <div className="flex items-center gap-3">
                       <div className="w-1 h-8 bg-rose-400 rounded-full" />
@@ -725,8 +690,6 @@ export default function Meniu({ setCartCount }) {
                       Vezi toate <IcoArrow />
                     </button>
                   </div>
-
-                  {/* Grid - max 4 per secțiune */}
                   <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
                     {prodCat.slice(0, 4).map(produs => (
                       <Card
@@ -735,15 +698,10 @@ export default function Meniu({ setCartCount }) {
                         onDetalii={setProdusSelectat}
                         onAdauga={adaugaInCos}
                         favorit={favorite.has(produs.id)}
-                        onFavorit={id => setFavorite(prev => {
-                          const n = new Set(prev);
-                          n.has(id) ? n.delete(id) : n.add(id);
-                          return n;
-                        })}
+                        onFavorit={toggleFavorit}
                       />
                     ))}
                   </div>
-
                   {prodCat.length > 4 && (
                     <div className="text-center mt-6">
                       <button
@@ -759,7 +717,6 @@ export default function Meniu({ setCartCount }) {
             })}
           </div>
         ) : (
-          /* Grid simplu când e filtrat */
           filtrate.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-24 text-center">
               <div className="text-6xl mb-4 opacity-30">🌷</div>
@@ -779,7 +736,6 @@ export default function Meniu({ setCartCount }) {
             </div>
           ) : (
             <div>
-              {/* Header categorie selectată */}
               {catActiva !== 'Toate' && (
                 <div className="flex items-center gap-3 mb-8">
                   <div className="w-1 h-8 bg-rose-400 rounded-full" />
@@ -797,11 +753,7 @@ export default function Meniu({ setCartCount }) {
                     onDetalii={setProdusSelectat}
                     onAdauga={adaugaInCos}
                     favorit={favorite.has(produs.id)}
-                    onFavorit={id => setFavorite(prev => {
-                      const n = new Set(prev);
-                      n.has(id) ? n.delete(id) : n.add(id);
-                      return n;
-                    })}
+                    onFavorit={toggleFavorit}
                   />
                 ))}
               </div>
@@ -810,22 +762,18 @@ export default function Meniu({ setCartCount }) {
         )}
       </div>
 
-      {/* ── Modal detalii ─────────────────────────────────────────────── */}
+      {/* Modal detalii */}
       {produsSelectat && (
         <Modal
           produs={produsSelectat}
           onClose={() => setProdusSelectat(null)}
           onAdauga={adaugaInCos}
           favorit={favorite.has(produsSelectat.id)}
-          onFavorit={id => setFavorite(prev => {
-            const n = new Set(prev);
-            n.has(id) ? n.delete(id) : n.add(id);
-            return n;
-          })}
+          onFavorit={toggleFavorit}
         />
       )}
 
-      {/* ── Coș drawer ────────────────────────────────────────────────── */}
+      {/* Coș drawer */}
       <CosDrawer
         open={cosOpen}
         onClose={() => setCosOpen(false)}
