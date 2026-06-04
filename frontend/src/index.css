@@ -23,6 +23,11 @@ body {
   color: #1A1A1A;
 }
 
+#root {
+  width: 100%;
+  text-align: left;
+}
+
 h1, h2, h3 {
   font-family: 'Playfair Display', serif;
 }
