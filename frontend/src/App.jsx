@@ -1,18 +1,20 @@
 import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 
-function App() {
-  // 1. Păstrăm starea de Dark Mode creată de colegul tău
-  const [darkMode, setDarkMode] = useState(false);
+import Navbar from './Navbar';
+import CookieBanner from './components/layout/CookieBanner';
 
-  // 2. Adăugăm stările noi pentru Filtrare și Căutare (pentru grila de evaluare)
+import HomePage from './pages/HomePage';
+import Meniu from './Meniu';
+import PoliticaConfidentialitate from './pages/PoliticaConfidentialitate';
+import TermeniConditii from './pages/TermeniConditii';
+
+function App() {
+  const [darkMode, setDarkMode] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('Toate');
-  
-  // 3. STATIE NOUĂ: Numărul de produse din coș (bifează dinamică avansată în grilă!)
   const [cartCount, setCartCount] = useState(0);
 
-  // Sincronizarea modulul Dark Mode cu HTML-ul pentru Tailwind (Munca intactă a colegului)
   useEffect(() => {
     if (darkMode) {
       document.documentElement.classList.add('dark');
@@ -23,9 +25,47 @@ function App() {
 
   return (
     <Router>
-      <div className="App">
-        <h1>Proiectul meu</h1>
-        {/* Aici vom adăuga Navbar-ul și Rutele ulterior */}
+      <div className="App min-h-screen bg-white dark:bg-gray-900 text-black dark:text-white transition-colors duration-200">
+
+        {/* Navbar vizibil pe toate paginile */}
+        <Navbar
+          darkMode={darkMode}
+          setDarkMode={setDarkMode}
+          cartCount={cartCount}
+        />
+
+        {/* Conținut pagini */}
+        <Routes>
+          <Route path="/" element={<HomePage />} />
+
+          <Route
+            path="/meniu"
+            element={
+              <Meniu
+                searchQuery={searchQuery}
+                setSearchQuery={setSearchQuery}
+              />
+            }
+          />
+
+          <Route
+            path="/aranjamente"
+            element={
+              <Meniu
+                searchQuery={searchQuery}
+                setSearchQuery={setSearchQuery}
+              />
+            }
+          />
+
+          {/* Pagini GDPR */}
+          <Route path="/politica-confidentialitate" element={<PoliticaConfidentialitate />} />
+          <Route path="/termeni-conditii" element={<TermeniConditii />} />
+        </Routes>
+
+        {/* Banner cookie GDPR — apare pe toate paginile */}
+        <CookieBanner />
+
       </div>
     </Router>
   );

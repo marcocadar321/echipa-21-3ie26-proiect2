@@ -1,73 +1,67 @@
 import React, { useState, useEffect, useRef } from 'react';
+import Footer from './components/layout/Footer';
 
-// ─── Constante ────────────────────────────────────────────────────────────────
 const STRAPI_URL = 'http://localhost:1337';
 
-// ─── Icoane SVG ───────────────────────────────────────────────────────────────
-const IcoCart = () => (
-  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+// ─── Icons ────────────────────────────────────────────────────────────────────
+const IcoCart = ({ size = 16 }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
     <circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/>
     <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/>
   </svg>
 );
-const IcoHeart = ({ filled }) => (
-  <svg width="14" height="14" viewBox="0 0 24 24" fill={filled ? 'currentColor' : 'none'} stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+const IcoHeart = ({ filled, size = 14 }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill={filled ? 'currentColor' : 'none'} stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
     <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
   </svg>
 );
-const IcoClose = () => (
-  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
+const IcoClose = ({ size = 14 }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round">
     <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
   </svg>
 );
 const IcoSearch = () => (
-  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
     <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
   </svg>
 );
 const IcoStar = ({ filled }) => (
-  <svg width="11" height="11" viewBox="0 0 24 24" fill={filled ? '#f59e0b' : 'none'} stroke="#f59e0b" strokeWidth="1.5">
+  <svg width="10" height="10" viewBox="0 0 24 24" fill={filled ? '#e8a87c' : 'none'} stroke="#e8a87c" strokeWidth="1.5">
     <polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/>
   </svg>
 );
-const IcoChevronDown = () => (
-  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-    <polyline points="6 9 12 15 18 9"/>
-  </svg>
-);
-const IcoFilter = () => (
-  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <line x1="4" y1="6" x2="20" y2="6"/><line x1="8" y1="12" x2="16" y2="12"/><line x1="11" y1="18" x2="13" y2="18"/>
-  </svg>
-);
 const IcoArrow = () => (
-  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
     <line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/>
   </svg>
 );
+const IcoChevron = () => (
+  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"><polyline points="6 9 12 15 18 9"/></svg>
+);
+const IcoBag = () => (
+  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/>
+  </svg>
+);
+const IcoQuote = () => (
+  <svg width="28" height="28" viewBox="0 0 24 24" fill="currentColor" opacity="0.15">
+    <path d="M3 21c3 0 7-1 7-8V5c0-1.25-.756-2.017-2-2H4c-1.25 0-2 .75-2 1.972V11c0 1.25.75 2 2 2 1 0 1 0 1 1v1c0 1-1 2-2 2s-1 .008-1 1.031V20c0 1 0 1 1 1z"/>
+    <path d="M15 21c3 0 7-1 7-8V5c0-1.25-.757-2.017-2-2h-4c-1.25 0-2 .75-2 1.972V11c0 1.25.75 2 2 2h.75c0 2.25.25 4-2.75 4v3c0 1 0 1 1 1z"/>
+  </svg>
+);
 
-// ─── Helpers (Strapi v5 — fără .attributes) ───────────────────────────────────
+// ─── Helpers ──────────────────────────────────────────────────────────────────
 const getImageUrl = (item) => {
-  // Strapi v5: câmpurile sunt direct pe item
   const imgData = item?.Imagine ?? item?.imagine;
   if (!imgData) return null;
-  const url =
-    imgData?.formats?.medium?.url ??
-    imgData?.formats?.small?.url ??
-    imgData?.url ??
-    null;
+  const url = imgData?.formats?.medium?.url ?? imgData?.formats?.small?.url ?? imgData?.url ?? null;
   if (!url) return null;
   return url.startsWith('http') ? url : `${STRAPI_URL}${url}`;
 };
 
 const mapArticle = (item) => {
-  // Strapi v5: câmpurile sunt direct pe item, nu în item.attributes
   const catRaw = item?.Categorii ?? item?.categorii;
-  const catNume =
-    catRaw?.Nume ?? catRaw?.nume ??
-    catRaw?.data?.attributes?.Nume ?? // fallback v4
-    'Altele';
-
+  const catNume = catRaw?.Nume ?? catRaw?.nume ?? catRaw?.data?.attributes?.Nume ?? 'Altele';
   return {
     id: item.id,
     documentId: item.documentId ?? null,
@@ -78,131 +72,118 @@ const mapArticle = (item) => {
     pretVechi: item.PretVechi ?? item.pretVechi ?? null,
     stoc: item.stoc ?? item.Stoc ?? null,
     rating: item.rating ?? item.Rating ?? 4,
-    imagine: getImageUrl(item) ?? 'https://images.unsplash.com/photo-1490750967868-88df5691cc45?w=600&q=80',
+    imagine: getImageUrl(item) ?? 'https://images.unsplash.com/photo-1490750967868-88df5691cc45?w=800&q=80',
   };
 };
 
-// ─── Sub-componente ───────────────────────────────────────────────────────────
 const Stele = ({ rating = 4 }) => (
-  <div style={{ display: 'flex', gap: 2 }}>
+  <div style={{ display: 'flex', gap: '2px' }}>
     {[1,2,3,4,5].map(i => <IcoStar key={i} filled={i <= rating} />)}
   </div>
 );
 
+// ─── Skeleton ─────────────────────────────────────────────────────────────────
+const Skeleton = () => (
+  <div className="skeleton-card">
+    <div className="skeleton-img" />
+    <div className="skeleton-body">
+      <div className="skeleton-line short" />
+      <div className="skeleton-line medium" />
+      <div className="skeleton-line long" />
+    </div>
+  </div>
+);
+
+// ─── Badge Stoc ───────────────────────────────────────────────────────────────
 const BadgeStoc = ({ stoc }) => {
   if (stoc === undefined || stoc === null) return null;
-  const cfg =
-    stoc <= 0  ? { text: 'Epuizat',         cls: 'bg-red-100 text-red-600 border-red-200' } :
-    stoc <= 5  ? { text: `Ultimele ${stoc}`, cls: 'bg-amber-100 text-amber-700 border-amber-200' } :
-                 { text: 'În stoc',          cls: 'bg-emerald-100 text-emerald-700 border-emerald-200' };
+  if (stoc > 5) return null;
+  const cfg = stoc <= 0
+    ? { text: 'Epuizat', color: '#9ca3af', bg: 'rgba(156,163,175,0.15)' }
+    : { text: `Ultimele ${stoc}`, color: '#b45309', bg: 'rgba(245,158,11,0.12)' };
   return (
-    <span className={`absolute top-3 left-3 text-[9px] font-black uppercase tracking-widest px-2 py-0.5 rounded-full border ${cfg.cls}`}>
+    <span style={{
+      position: 'absolute', top: '12px', left: '12px',
+      background: cfg.bg, color: cfg.color,
+      fontSize: '9px', fontWeight: '600', letterSpacing: '0.15em',
+      textTransform: 'uppercase', padding: '4px 10px',
+      backdropFilter: 'blur(8px)', border: `1px solid ${cfg.color}30`,
+    }}>
       {cfg.text}
     </span>
   );
 };
 
-// ─── Skeleton ─────────────────────────────────────────────────────────────────
-const Skeleton = () => (
-  <div className="bg-white dark:bg-zinc-900 rounded-3xl overflow-hidden border border-zinc-100 dark:border-zinc-800 animate-pulse">
-    <div className="bg-zinc-200 dark:bg-zinc-700" style={{ paddingTop: '100%' }} />
-    <div className="p-5 space-y-3">
-      <div className="h-2 bg-zinc-200 dark:bg-zinc-700 rounded w-1/3" />
-      <div className="h-4 bg-zinc-200 dark:bg-zinc-700 rounded w-3/4" />
-      <div className="h-3 bg-zinc-200 dark:bg-zinc-700 rounded" />
-      <div className="flex justify-between pt-2">
-        <div className="h-6 bg-zinc-200 dark:bg-zinc-700 rounded w-1/4" />
-        <div className="h-8 bg-zinc-200 dark:bg-zinc-700 rounded-xl w-1/3" />
-      </div>
-    </div>
-  </div>
-);
-
 // ─── Card Produs ──────────────────────────────────────────────────────────────
-const Card = ({ produs, onDetalii, onAdauga, favorit, onFavorit }) => {
+const Card = ({ produs, onDetalii, onAdauga, favorit, onFavorit, index = 0 }) => {
   const [adaugat, setAdaugat] = useState(false);
   const [imgErr, setImgErr] = useState(false);
+  const [hovered, setHovered] = useState(false);
 
   const handleAdauga = (e) => {
     e.stopPropagation();
     if (produs.stoc === 0) return;
     setAdaugat(true);
     onAdauga(produs);
-    setTimeout(() => setAdaugat(false), 2000);
+    setTimeout(() => setAdaugat(false), 2200);
   };
 
-  const src = imgErr
-    ? 'https://images.unsplash.com/photo-1490750967868-88df5691cc45?w=600&q=80'
-    : produs.imagine;
+  const src = imgErr ? 'https://images.unsplash.com/photo-1490750967868-88df5691cc45?w=800&q=80' : produs.imagine;
+  const discount = produs.pretVechi ? Math.round(100 - (produs.pret / produs.pretVechi) * 100) : null;
 
   return (
-    <article className="group relative bg-white dark:bg-zinc-900 border border-zinc-100 dark:border-zinc-800 rounded-3xl overflow-hidden shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-500 flex flex-col">
-      {/* Imagine */}
-      <div
-        className="relative overflow-hidden bg-zinc-50 dark:bg-zinc-800 cursor-pointer"
-        style={{ paddingTop: '100%' }}
-        onClick={() => onDetalii(produs)}
-      >
+    <article
+      className="product-card"
+      style={{ animationDelay: `${index * 80}ms` }}
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+    >
+      <div className="card-image-wrap" onClick={() => onDetalii(produs)}>
         <img
           src={src}
           alt={produs.nume}
           onError={() => setImgErr(true)}
-          className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+          className={`card-img ${hovered ? 'hovered' : ''}`}
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-400 pointer-events-none" />
+        <div className={`card-overlay ${hovered ? 'visible' : ''}`} />
         <BadgeStoc stoc={produs.stoc} />
+        {discount && <span className="badge-discount">−{discount}%</span>}
         <button
+          className={`btn-fav ${favorit ? 'active' : ''}`}
           onClick={(e) => { e.stopPropagation(); onFavorit(produs.id); }}
-          className={`absolute top-3 right-3 w-8 h-8 rounded-full flex items-center justify-center shadow transition-all duration-200 ${
-            favorit ? 'bg-rose-500 text-white' : 'bg-white/80 dark:bg-zinc-700/80 text-zinc-400 hover:text-rose-500'
-          }`}
+          title="Adaugă la favorite"
         >
-          <IcoHeart filled={favorit} />
+          <IcoHeart filled={favorit} size={13} />
         </button>
-        <div className="absolute bottom-3 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 translate-y-2 group-hover:translate-y-0 transition-all duration-300 pointer-events-none group-hover:pointer-events-auto">
-          <button
-            onClick={() => onDetalii(produs)}
-            className="bg-white dark:bg-zinc-800 text-zinc-900 dark:text-white text-[10px] font-bold uppercase tracking-widest px-3 py-1.5 rounded-full shadow-lg flex items-center gap-1.5 whitespace-nowrap"
-          >
-            <IcoSearch /> Detalii rapide
+        <div className={`card-quick-view ${hovered ? 'visible' : ''}`}>
+          <button className="btn-quick-view" onClick={() => onDetalii(produs)}>
+            <IcoSearch /> <span>Detalii rapide</span>
           </button>
         </div>
       </div>
 
-      {/* Body */}
-      <div className="p-5 flex flex-col flex-grow">
-        <div className="flex items-center justify-between mb-1.5">
-          <span className="text-[9px] font-black uppercase tracking-[0.2em] text-rose-400">{produs.categorie}</span>
+      <div className="card-body">
+        <div className="card-meta">
+          <span className="card-category">{produs.categorie}</span>
           <Stele rating={produs.rating} />
         </div>
-        <h3
-          className="font-serif text-[15px] leading-snug text-zinc-900 dark:text-white mb-2 cursor-pointer hover:text-rose-600 dark:hover:text-rose-400 transition-colors line-clamp-2"
-          onClick={() => onDetalii(produs)}
-        >
-          {produs.nume}
-        </h3>
-        <p className="text-zinc-500 dark:text-zinc-400 text-[11px] leading-relaxed line-clamp-2 mb-4 flex-grow">
-          {produs.descriere}
-        </p>
-        <div className="flex items-center justify-between pt-3 border-t border-zinc-100 dark:border-zinc-800">
-          <div>
-            <span className="text-lg font-black text-zinc-900 dark:text-white">{produs.pret} lei</span>
-            {produs.pretVechi && (
-              <span className="ml-1.5 text-xs text-zinc-400 line-through">{produs.pretVechi} lei</span>
-            )}
+        <h3 className="card-title" onClick={() => onDetalii(produs)}>{produs.nume}</h3>
+        <p className="card-desc">{produs.descriere}</p>
+        <div className="card-footer">
+          <div className="card-price">
+            <span className="price-main">{produs.pret} RON</span>
+            {produs.pretVechi && <span className="price-old">{produs.pretVechi} RON</span>}
           </div>
           <button
+            className={`btn-add ${adaugat ? 'added' : ''} ${produs.stoc === 0 ? 'disabled' : ''}`}
             onClick={handleAdauga}
             disabled={produs.stoc === 0}
-            className={`flex items-center gap-1.5 text-[11px] font-bold px-3.5 py-2 rounded-xl shadow-sm transition-all duration-300 ${
-              adaugat
-                ? 'bg-emerald-500 text-white scale-95'
-                : produs.stoc === 0
-                ? 'bg-zinc-200 dark:bg-zinc-700 text-zinc-400 cursor-not-allowed'
-                : 'bg-zinc-900 hover:bg-rose-600 text-white dark:bg-white dark:text-zinc-900 dark:hover:bg-rose-500 dark:hover:text-white'
-            }`}
           >
-            {adaugat ? <>✓ Adăugat!</> : <><IcoCart /> Adaugă</>}
+            {adaugat ? (
+              <><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="20 6 9 17 4 12"/></svg> Adăugat</>
+            ) : (
+              <><IcoCart size={12} /> Adaugă</>
+            )}
           </button>
         </div>
       </div>
@@ -210,7 +191,7 @@ const Card = ({ produs, onDetalii, onAdauga, favorit, onFavorit }) => {
   );
 };
 
-// ─── Modal Detalii ────────────────────────────────────────────────────────────
+// ─── Modal ────────────────────────────────────────────────────────────────────
 const Modal = ({ produs, onClose, onAdauga, favorit, onFavorit }) => {
   const backdropRef = useRef(null);
   const [imgErr, setImgErr] = useState(false);
@@ -219,166 +200,132 @@ const Modal = ({ produs, onClose, onAdauga, favorit, onFavorit }) => {
     const onKey = (e) => { if (e.key === 'Escape') onClose(); };
     document.addEventListener('keydown', onKey);
     document.body.style.overflow = 'hidden';
-    return () => {
-      document.removeEventListener('keydown', onKey);
-      document.body.style.overflow = '';
-    };
+    return () => { document.removeEventListener('keydown', onKey); document.body.style.overflow = ''; };
   }, [onClose]);
 
   return (
     <div
       ref={backdropRef}
+      className="modal-backdrop"
       onClick={(e) => { if (e.target === backdropRef.current) onClose(); }}
-      className="fixed inset-0 bg-black/70 backdrop-blur-md z-50 flex items-center justify-center p-4"
-      style={{ animation: 'fadeIn .2s ease' }}
     >
-      <div
-        className="bg-white dark:bg-zinc-900 rounded-3xl max-w-2xl w-full overflow-hidden shadow-2xl border border-zinc-100 dark:border-zinc-800 flex flex-col md:flex-row relative"
-        style={{ animation: 'slideUp .3s ease' }}
-      >
-        <button
-          onClick={onClose}
-          className="absolute top-4 right-4 z-20 w-8 h-8 bg-zinc-100 dark:bg-zinc-700 hover:bg-zinc-200 dark:hover:bg-zinc-600 text-zinc-700 dark:text-white rounded-full flex items-center justify-center transition-colors"
-        >
-          <IcoClose />
-        </button>
-        <div className="relative w-full md:w-1/2 min-h-[260px] bg-zinc-50 dark:bg-zinc-800 flex-shrink-0">
+      <div className="modal-box">
+        <button className="modal-close" onClick={onClose}><IcoClose size={13} /></button>
+        <div className="modal-img-side">
           <img
-            src={imgErr ? 'https://images.unsplash.com/photo-1490750967868-88df5691cc45?w=600&q=80' : produs.imagine}
+            src={imgErr ? 'https://images.unsplash.com/photo-1490750967868-88df5691cc45?w=800&q=80' : produs.imagine}
             alt={produs.nume}
             onError={() => setImgErr(true)}
-            className="w-full h-full object-cover absolute inset-0"
+            className="modal-img"
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent pointer-events-none" />
-          <span className="absolute bottom-4 left-4 bg-white/90 dark:bg-zinc-900/90 text-rose-500 text-[9px] font-black uppercase tracking-[0.2em] px-3 py-1 rounded-full">
-            {produs.categorie}
-          </span>
+          <div className="modal-img-overlay" />
+          <span className="modal-cat-badge">{produs.categorie}</span>
           <button
+            className={`modal-fav-btn ${favorit ? 'active' : ''}`}
             onClick={() => onFavorit(produs.id)}
-            className={`absolute top-4 left-4 w-9 h-9 rounded-full flex items-center justify-center shadow-md transition-all ${
-              favorit ? 'bg-rose-500 text-white' : 'bg-white/80 dark:bg-zinc-700/80 text-zinc-400'
-            }`}
           >
-            <IcoHeart filled={favorit} />
+            <IcoHeart filled={favorit} size={13} />
           </button>
         </div>
-        <div className="w-full md:w-1/2 p-7 flex flex-col justify-between gap-4">
-          <div>
-            <div className="flex items-center gap-2 mb-2">
-              <Stele rating={produs.rating} />
-              <span className="text-[10px] text-zinc-400">(24 recenzii)</span>
-            </div>
-            <h2 className="font-serif text-2xl text-zinc-900 dark:text-white leading-tight mb-3">{produs.nume}</h2>
-            <p className="text-zinc-500 dark:text-zinc-400 text-sm leading-relaxed mb-5">{produs.descriere}</p>
-            <div className="grid grid-cols-2 gap-2">
-              {[
-                ['Livrare', '24h'],
-                ['Prospețime', '7+ zile'],
-                ['Origine', 'România'],
-                ['Ambalaj', 'Cadou incl.'],
-              ].map(([label, val]) => (
-                <div key={label} className="bg-zinc-50 dark:bg-zinc-800 rounded-xl px-3 py-2">
-                  <div className="text-[9px] uppercase tracking-widest text-zinc-400 mb-0.5">{label}</div>
-                  <div className="text-xs font-bold text-zinc-800 dark:text-zinc-200">{val}</div>
+        <div className="modal-content-side">
+          <div className="modal-rating-row">
+            <Stele rating={produs.rating} />
+            <span className="modal-review-count">24 recenzii</span>
+          </div>
+          <h2 className="modal-title">{produs.nume}</h2>
+          <p className="modal-desc">{produs.descriere}</p>
+          <div className="modal-features">
+            {[
+              ['🚀', 'Livrare VIP', 'Timișoara în 2h'],
+              ['🌿', 'Prospețime', 'Garantată 7+ zile'],
+              ['🎨', 'Design', 'Florist Premium'],
+              ['📦', 'Ambalaj', 'Maison de Fleurs'],
+            ].map(([ico, label, val]) => (
+              <div key={label} className="modal-feature">
+                <span className="feature-icon">{ico}</span>
+                <div>
+                  <div className="feature-label">{label}</div>
+                  <div className="feature-value">{val}</div>
                 </div>
-              ))}
-            </div>
+              </div>
+            ))}
           </div>
-          <div>
-            <div className="flex items-baseline gap-2 mb-4">
-              <span className="text-3xl font-black text-zinc-900 dark:text-white">{produs.pret} lei</span>
-              {produs.pretVechi && (
-                <span className="text-sm text-zinc-400 line-through">{produs.pretVechi} lei</span>
-              )}
+          <div className="modal-price-row">
+            <div>
+              <span className="modal-price">{produs.pret} RON</span>
+              {produs.pretVechi && <span className="modal-price-old">{produs.pretVechi} RON</span>}
             </div>
-            <button
-              onClick={() => { onAdauga(produs); onClose(); }}
-              disabled={produs.stoc === 0}
-              className="w-full bg-zinc-900 hover:bg-rose-600 dark:bg-white dark:text-zinc-900 dark:hover:bg-rose-500 dark:hover:text-white text-white py-3 rounded-2xl font-bold text-sm shadow-lg transition-all duration-300 flex items-center justify-center gap-2 group disabled:opacity-40 disabled:cursor-not-allowed"
-            >
-              <IcoCart />
-              {produs.stoc === 0 ? 'Produs epuizat' : 'Adaugă în coș'}
-              <span className="group-hover:translate-x-1 transition-transform duration-200"><IcoArrow /></span>
-            </button>
+            {produs.pretVechi && (
+              <span className="modal-discount-badge">
+                −{Math.round(100 - (produs.pret / produs.pretVechi) * 100)}%
+              </span>
+            )}
           </div>
+          <button
+            className="btn-modal-add"
+            onClick={() => { onAdauga(produs); onClose(); }}
+            disabled={produs.stoc === 0}
+          >
+            <IcoBag />
+            {produs.stoc === 0 ? 'Momentan epuizat' : 'Adaugă în selecție'}
+            <IcoArrow />
+          </button>
         </div>
       </div>
     </div>
   );
 };
 
-// ─── Coș lateral (drawer) ─────────────────────────────────────────────────────
+// ─── Coș Drawer ───────────────────────────────────────────────────────────────
 const CosDrawer = ({ open, onClose, items, onRemove, onClear }) => {
   const total = items.reduce((s, i) => s + i.pret * i.qty, 0);
-
   return (
     <>
-      {open && (
-        <div
-          className="fixed inset-0 bg-black/50 z-40 backdrop-blur-sm"
-          onClick={onClose}
-          style={{ animation: 'fadeIn .2s ease' }}
-        />
-      )}
-      <div
-        className={`fixed top-0 right-0 h-full w-full max-w-sm bg-white dark:bg-zinc-900 z-50 shadow-2xl flex flex-col transition-transform duration-400 ease-in-out ${
-          open ? 'translate-x-0' : 'translate-x-full'
-        }`}
-      >
-        <div className="flex items-center justify-between px-6 py-5 border-b border-zinc-100 dark:border-zinc-800">
+      {open && <div className="drawer-backdrop" onClick={onClose} />}
+      <div className={`drawer ${open ? 'open' : ''}`}>
+        <div className="drawer-header">
           <div>
-            <h2 className="font-serif text-lg text-zinc-900 dark:text-white">Coșul tău</h2>
-            <p className="text-xs text-zinc-400">{items.length} {items.length === 1 ? 'produs' : 'produse'}</p>
+            <h2 className="drawer-title">Selecția Ta</h2>
+            <p className="drawer-subtitle">{items.length} {items.length === 1 ? 'aranjament' : 'aranjamente'}</p>
           </div>
-          <button onClick={onClose} className="w-8 h-8 bg-zinc-100 dark:bg-zinc-700 rounded-full flex items-center justify-center hover:bg-zinc-200 dark:hover:bg-zinc-600 transition-colors">
-            <IcoClose />
-          </button>
+          <button className="drawer-close-btn" onClick={onClose}><IcoClose /></button>
         </div>
-        <div className="flex-1 overflow-y-auto px-6 py-4 space-y-4">
+        <div className="drawer-items">
           {items.length === 0 ? (
-            <div className="flex flex-col items-center justify-center h-full text-center py-16">
-              <div className="text-5xl mb-4 opacity-30">🌸</div>
-              <p className="text-zinc-400 font-serif">Coșul este gol.</p>
-              <p className="text-xs text-zinc-300 dark:text-zinc-600 mt-1">Adaugă câteva flori frumoase!</p>
+            <div className="drawer-empty">
+              <div className="drawer-empty-icon">💐</div>
+              <p className="drawer-empty-title">Atelierul te așteaptă</p>
+              <p className="drawer-empty-sub">Adaugă flori din colecție</p>
             </div>
           ) : (
             items.map((item) => (
-              <div key={item.id} className="flex gap-3 items-center bg-zinc-50 dark:bg-zinc-800 rounded-2xl p-3">
+              <div key={item.id} className="drawer-item">
                 <img
                   src={item.imagine}
                   alt={item.nume}
                   onError={(e) => { e.target.src = 'https://images.unsplash.com/photo-1490750967868-88df5691cc45?w=100&q=80'; }}
-                  className="w-14 h-14 object-cover rounded-xl flex-shrink-0"
+                  className="drawer-item-img"
                 />
-                <div className="flex-1 min-w-0">
-                  <p className="text-sm font-semibold text-zinc-900 dark:text-white truncate">{item.nume}</p>
-                  <p className="text-[11px] text-zinc-400">{item.qty} × {item.pret} lei</p>
+                <div className="drawer-item-info">
+                  <p className="drawer-item-name">{item.nume}</p>
+                  <p className="drawer-item-qty">{item.qty} × {item.pret} RON</p>
                 </div>
-                <div className="flex flex-col items-end gap-1">
-                  <span className="text-sm font-bold text-zinc-900 dark:text-white">{item.qty * item.pret} lei</span>
-                  <button
-                    onClick={() => onRemove(item.id)}
-                    className="text-[10px] text-zinc-400 hover:text-red-500 transition-colors"
-                  >
-                    Elimină
-                  </button>
+                <div className="drawer-item-right">
+                  <span className="drawer-item-total">{item.qty * item.pret} RON</span>
+                  <button className="drawer-item-remove" onClick={() => onRemove(item.id)}>Elimină</button>
                 </div>
               </div>
             ))
           )}
         </div>
         {items.length > 0 && (
-          <div className="px-6 py-5 border-t border-zinc-100 dark:border-zinc-800 space-y-3">
-            <div className="flex justify-between text-sm">
-              <span className="text-zinc-500 dark:text-zinc-400">Subtotal</span>
-              <span className="font-black text-zinc-900 dark:text-white text-lg">{total} lei</span>
+          <div className="drawer-footer">
+            <div className="drawer-total-row">
+              <span className="drawer-total-label">Total</span>
+              <span className="drawer-total-val">{total} RON</span>
             </div>
-            <button className="w-full bg-zinc-900 hover:bg-rose-600 dark:bg-white dark:text-zinc-900 dark:hover:bg-rose-500 dark:hover:text-white text-white py-3 rounded-2xl font-bold text-sm transition-all duration-300 flex items-center justify-center gap-2">
-              Finalizează comanda <IcoArrow />
-            </button>
-            <button onClick={onClear} className="w-full text-xs text-zinc-400 hover:text-red-400 transition-colors py-1">
-              Golește coșul
-            </button>
+            <button className="btn-checkout">Finalizează Comanda <IcoArrow /></button>
+            <button className="btn-clear-cart" onClick={onClear}>Golește coșul</button>
           </div>
         )}
       </div>
@@ -386,7 +333,86 @@ const CosDrawer = ({ open, onClose, items, onRemove, onClear }) => {
   );
 };
 
-// ─── Componenta Principală: Meniu ─────────────────────────────────────────────
+// ─── Reviews Section ──────────────────────────────────────────────────────────
+const REVIEWS = [
+  { id: 1, nume: 'Alexandra M.', rating: 5, data: '18 mai 2025', text: 'Am comandat un buchet pentru mama de ziua ei și a fost absolut superb! Florile erau proaspete, aranjamentul impecabil, iar livrarea a ajuns exact la timp. Cu siguranță voi mai comanda.', tag: 'Buchet aniversar', avatar: 'A' },
+  { id: 2, nume: 'Radu P.', rating: 5, data: '3 iunie 2025', text: 'Calitate excepțională și ambalaj de lux. Am primit complimente de la toți invitații la eveniment. Echipa Maison de Fleurs a depășit orice așteptare.', tag: 'Aranjament eveniment', avatar: 'R' },
+  { id: 3, nume: 'Ioana C.', rating: 4, data: '27 aprilie 2025', text: 'Florile au fost exact cum le-am văzut în poze – ba chiar mai frumoase în realitate. Livrarea a fost promptă și amabilă. Recomand cu toată inima.', tag: 'Trandafiri premium', avatar: 'I' },
+  { id: 4, nume: 'Mihai T.', rating: 5, data: '11 mai 2025', text: 'Am surprins-o pe soția mea cu o cutie de trandafiri și reacția ei a spus totul. Florile s-au păstrat proaspete peste 10 zile. Serviciu ireproșabil!', tag: 'Cutie cu trandafiri', avatar: 'M' },
+  { id: 5, nume: 'Elena D.', rating: 5, data: '2 iunie 2025', text: 'A treia comandă și de fiecare dată serviciul a fost la fel de bun. Florile sunt mereu proaspete, designul elegant, iar echipa super drăguță. Bravo!', tag: 'Client fidel', avatar: 'E' },
+  { id: 6, nume: 'Cristian B.', rating: 4, data: '22 mai 2025', text: 'Prețuri corecte pentru calitatea oferită. Am primit un aranjament personalizat în mai puțin de 24h. Florile au arătat perfect la evenimentul nostru.', tag: 'Aranjament nuntă', avatar: 'C' },
+];
+
+const ReviewsSection = () => {
+  const [activeIdx, setActiveIdx] = useState(0);
+  const total = REVIEWS.length;
+  const prev = () => setActiveIdx(i => (i - 1 + total) % total);
+  const next = () => setActiveIdx(i => (i + 1) % total);
+  const visible = [REVIEWS[activeIdx], REVIEWS[(activeIdx + 1) % total], REVIEWS[(activeIdx + 2) % total]];
+
+  return (
+    <section className="reviews-section">
+      <div className="reviews-inner">
+        <div className="reviews-header">
+          <span className="reviews-eyebrow">✦ Recenzii Clienți ✦</span>
+          <h2 className="reviews-title">Ce spun clienții noștri</h2>
+          <p className="reviews-sub">Peste 500 de clienți mulțumiți în Timișoara și împrejurimi</p>
+          <div className="reviews-aggregate">
+            <div className="reviews-score">4.9</div>
+            <div>
+              <div style={{ display: 'flex', gap: '3px', marginBottom: '4px' }}>
+                {[1,2,3,4,5].map(i => (
+                  <svg key={i} width="14" height="14" viewBox="0 0 24 24" fill="#e8a87c" stroke="#e8a87c" strokeWidth="1.5">
+                    <polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/>
+                  </svg>
+                ))}
+              </div>
+              <div className="reviews-count-label">bazat pe 500+ recenzii</div>
+            </div>
+          </div>
+        </div>
+        <div className="reviews-grid">
+          {visible.map((rev, i) => (
+            <div key={rev.id} className="review-card" style={{ animationDelay: `${i * 80}ms` }}>
+              <div className="review-quote-icon"><IcoQuote /></div>
+              <div className="review-stars">
+                {[1,2,3,4,5].map(s => (
+                  <svg key={s} width="11" height="11" viewBox="0 0 24 24" fill={s <= rev.rating ? '#e8a87c' : 'none'} stroke="#e8a87c" strokeWidth="1.5">
+                    <polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/>
+                  </svg>
+                ))}
+              </div>
+              <p className="review-text">"{rev.text}"</p>
+              <div className="review-tag">{rev.tag}</div>
+              <div className="review-author">
+                <div className="review-avatar">{rev.avatar}</div>
+                <div>
+                  <div className="review-name">{rev.nume}</div>
+                  <div className="review-date">{rev.data}</div>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+        <div className="reviews-nav">
+          <button className="reviews-nav-btn" onClick={prev}>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+          </button>
+          <div className="reviews-dots">
+            {REVIEWS.map((_, i) => (
+              <button key={i} className={`reviews-dot ${i === activeIdx ? 'active' : ''}`} onClick={() => setActiveIdx(i)} />
+            ))}
+          </div>
+          <button className="reviews-nav-btn" onClick={next}>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+          </button>
+        </div>
+      </div>
+    </section>
+  );
+};
+
+// ─── Main Component ───────────────────────────────────────────────────────────
 export default function Meniu({ setCartCount }) {
   const [produse, setProduse] = useState([]);
   const [categorii, setCategorii] = useState(['Toate']);
@@ -403,38 +429,26 @@ export default function Meniu({ setCartCount }) {
   const [sortOpen, setSortOpen] = useState(false);
   const sortRef = useRef(null);
 
-  // ── Fetch Strapi v5 ─────────────────────────────────────────────────────
   useEffect(() => {
-    // populate=* aduce toate relațiile și media în Strapi v5
     fetch(`${STRAPI_URL}/api/produses?populate=Imagine&populate=categorii`)
-      .then(r => {
-        if (!r.ok) throw new Error(`Eroare server: ${r.status}`);
-        return r.json();
-      })
+      .then(r => { if (!r.ok) throw new Error(`Eroare server: ${r.status}`); return r.json(); })
       .then(json => {
-        if (!json.data) throw new Error('Răspuns invalid de la Strapi');
+        if (!json.data) throw new Error('Răspuns neidentificat');
         const mapped = json.data.map(mapArticle);
         setProduse(mapped);
         const cats = ['Toate', ...new Set(mapped.map(p => p.categorie).filter(Boolean))];
         setCategorii(cats);
         setLoading(false);
       })
-      .catch(err => {
-        setEroare(err.message);
-        setLoading(false);
-      });
+      .catch(err => { setEroare(err.message); setLoading(false); });
   }, []);
 
-  // ── Închide dropdown sortare la click afară ─────────────────────────────
   useEffect(() => {
-    const handler = (e) => {
-      if (sortRef.current && !sortRef.current.contains(e.target)) setSortOpen(false);
-    };
+    const handler = (e) => { if (sortRef.current && !sortRef.current.contains(e.target)) setSortOpen(false); };
     document.addEventListener('mousedown', handler);
     return () => document.removeEventListener('mousedown', handler);
   }, []);
 
-  // ── Filtrare + sortare ──────────────────────────────────────────────────
   const filtrate = produse
     .filter(p => {
       const catOk = catActiva === 'Toate' || p.categorie === catActiva;
@@ -449,7 +463,6 @@ export default function Meniu({ setCartCount }) {
       return 0;
     });
 
-  // ── Acțiuni coș ─────────────────────────────────────────────────────────
   const adaugaInCos = (produs) => {
     setCos(prev => {
       const exist = prev.find(i => i.id === produs.id);
@@ -470,188 +483,116 @@ export default function Meniu({ setCartCount }) {
     });
   };
 
-  const golesteCos = () => {
-    if (setCartCount) setCartCount(0);
-    setCos([]);
-  };
-
+  const golesteCos = () => { if (setCartCount) setCartCount(0); setCos([]); };
   const totalCos = cos.reduce((s, i) => s + i.qty, 0);
+  const toggleFavorit = (id) => setFavorite(prev => { const n = new Set(prev); n.has(id) ? n.delete(id) : n.add(id); return n; });
 
-  const sortLabel = {
-    'implicit': 'Sortare',
-    'pret-asc': 'Preț ↑',
-    'pret-desc': 'Preț ↓',
-    'nume': 'Nume A–Z',
-  }[sortare];
+  const sortOptions = [
+    ['implicit', 'Recomandate'],
+    ['pret-asc', 'Preț crescător'],
+    ['pret-desc', 'Preț descrescător'],
+    ['nume', 'Nume A–Z'],
+  ];
 
-  const toggleFavorit = (id) => setFavorite(prev => {
-    const n = new Set(prev);
-    n.has(id) ? n.delete(id) : n.add(id);
-    return n;
-  });
-
-  // ── Loading ──────────────────────────────────────────────────────────────
   if (loading) return (
-    <div className="py-12 px-4 sm:px-6 max-w-7xl mx-auto">
-      <div className="h-48 bg-zinc-100 dark:bg-zinc-800 rounded-3xl animate-pulse mb-10" />
-      <div className="flex gap-2 mb-8">
-        {[1,2,3,4].map(i => <div key={i} className="h-8 w-24 bg-zinc-100 dark:bg-zinc-800 rounded-full animate-pulse" />)}
-      </div>
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+    <div className="meniu-root">
+      <style>{CSS}</style>
+      <div className="loading-grid">
         {[...Array(8)].map((_, i) => <Skeleton key={i} />)}
       </div>
     </div>
   );
 
-  // ── Eroare ───────────────────────────────────────────────────────────────
   if (eroare) return (
-    <div className="py-24 px-6 max-w-xl mx-auto text-center">
-      <div className="text-5xl mb-4">🌸</div>
-      <h3 className="font-serif text-xl text-zinc-800 dark:text-white mb-2">Nu am putut încărca florile</h3>
-      <p className="text-zinc-400 text-sm mb-4">{eroare}</p>
-      <div className="bg-zinc-50 dark:bg-zinc-800 rounded-2xl p-4 text-left text-xs text-zinc-400 font-mono space-y-1">
-        <p>✓ Strapi rulează pe <strong className="text-zinc-700 dark:text-zinc-200">localhost:1337</strong>?</p>
-        <p>✓ Colecția <strong className="text-zinc-700 dark:text-zinc-200">Produse</strong> este publicată?</p>
-        <p>✓ Rolul <strong className="text-zinc-700 dark:text-zinc-200">Public</strong> are <strong className="text-zinc-700 dark:text-zinc-200">find</strong> + <strong className="text-zinc-700 dark:text-zinc-200">findOne</strong> bifat?</p>
+    <div className="meniu-root">
+      <style>{CSS}</style>
+      <div className="error-state">
+        <div className="error-icon">💐</div>
+        <h3 className="error-title">Conexiune întreruptă</h3>
+        <p className="error-msg">{eroare}</p>
+        <div className="error-tips">
+          <p>✦ Verificați dacă Strapi rulează la <strong>localhost:1337</strong></p>
+          <p>✦ Asigurați-vă că permisiunile <strong>Public (find + findOne)</strong> sunt active.</p>
+        </div>
       </div>
     </div>
   );
 
-  // ── Render ───────────────────────────────────────────────────────────────
   return (
-    <div className="min-h-screen bg-zinc-50 dark:bg-zinc-950">
-      <style>{`
-        @keyframes fadeIn { from { opacity:0 } to { opacity:1 } }
-        @keyframes slideUp { from { opacity:0; transform:translateY(16px) } to { opacity:1; transform:translateY(0) } }
-        @keyframes toastIn { from { opacity:0; transform:translateX(-50%) translateY(20px) } to { opacity:1; transform:translateX(-50%) translateY(0) } }
-      `}</style>
+    <div className="meniu-root">
+      <style>{CSS}</style>
 
       {/* Toast */}
       {toast && (
-        <div
-          className="fixed bottom-6 left-1/2 z-50 bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 text-sm font-semibold px-5 py-3 rounded-2xl shadow-2xl flex items-center gap-2"
-          style={{ animation: 'toastIn .3s ease', transform: 'translateX(-50%)' }}
-        >
-          <span className="text-emerald-400 dark:text-emerald-600">✓</span>
-          <span className="max-w-[200px] truncate">{toast}</span>
-          <span>adăugat!</span>
+        <div className="toast">
+          <span className="toast-check">✓</span>
+          <span className="toast-name">{toast}</span>
+          <span className="toast-label">adăugat în coș</span>
         </div>
       )}
 
-      {/* Hero Banner */}
-      <div className="relative overflow-hidden bg-gradient-to-br from-rose-50 via-pink-50 to-zinc-100 dark:from-zinc-900 dark:via-zinc-900 dark:to-zinc-900 px-4 sm:px-6 pt-12 pb-14">
-        <div className="absolute -top-10 -right-10 w-64 h-64 bg-rose-200/40 dark:bg-rose-900/20 rounded-full blur-3xl pointer-events-none" />
-        <div className="absolute -bottom-10 -left-10 w-48 h-48 bg-pink-200/40 dark:bg-pink-900/20 rounded-full blur-3xl pointer-events-none" />
-        <div className="max-w-7xl mx-auto relative">
-          <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-6">
-            <div>
-              <div className="inline-flex items-center gap-2 bg-white/70 dark:bg-zinc-800/70 backdrop-blur-sm text-rose-500 text-[10px] font-black uppercase tracking-[0.25em] px-3 py-1.5 rounded-full border border-rose-100 dark:border-rose-900 mb-4">
-                <span>🌸</span> Colecția noastră
-              </div>
-              <h1 className="font-serif text-4xl sm:text-5xl text-zinc-900 dark:text-white leading-[1.1] mb-2">
-                Buchete &<br />
-                <span className="text-rose-500">Aranjamente</span>
-              </h1>
-              <p className="text-zinc-500 dark:text-zinc-400 text-sm max-w-sm mt-3">
-                Flori proaspete, aranjate cu grijă, livrate în 24 de ore oriunde în oraș.
-              </p>
-            </div>
-            <div className="flex items-center gap-4 flex-shrink-0">
-              <div className="hidden sm:flex gap-6">
-                {[
-                  ['🌺', `${produse.length}`, 'produse'],
-                  ['📦', '24h', 'livrare'],
-                  ['⭐', '4.9', 'rating'],
-                ].map(([ico, val, lbl]) => (
-                  <div key={lbl} className="text-center">
-                    <div className="text-lg">{ico}</div>
-                    <div className="font-black text-zinc-900 dark:text-white text-sm">{val}</div>
-                    <div className="text-[10px] text-zinc-400 uppercase tracking-wide">{lbl}</div>
-                  </div>
-                ))}
-              </div>
-              <button
-                onClick={() => setCosOpen(true)}
-                className="relative bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 px-5 py-3 rounded-2xl font-bold text-sm flex items-center gap-2 hover:bg-rose-600 dark:hover:bg-rose-500 dark:hover:text-white transition-all duration-300 shadow-lg"
-              >
-                <IcoCart />
-                Coș
-                {totalCos > 0 && (
-                  <span className="absolute -top-2 -right-2 bg-rose-500 text-white text-[10px] font-black w-5 h-5 rounded-full flex items-center justify-center shadow">
-                    {totalCos}
-                  </span>
-                )}
-              </button>
-            </div>
-          </div>
+      {/* Hero */}
+      <div className="hero">
+        <div className="hero-inner">
+          <span className="hero-eyebrow">✦ Maison de Fleurs ✦</span>
+          <h1 className="hero-title">Colecția <em>Premium</em></h1>
+          <p className="hero-sub">
+            Flori de înaltă calitate, importate direct și aranjate de maeștri floriști.<br/>
+            Livrare exclusivă în ambalaje speciale în maximum 2 ore.
+          </p>
+          <button className="btn-hero-cart" onClick={() => setCosOpen(true)}>
+            <IcoCart size={14} />
+            <span>Vizualizează selecția</span>
+            {totalCos > 0 && <span className="hero-cart-badge">{totalCos}</span>}
+          </button>
+        </div>
+        <div className="hero-divider">
+          <svg viewBox="0 0 1200 40" preserveAspectRatio="none" style={{ width: '100%', height: '40px', display: 'block' }}>
+            <path d="M0,20 Q300,0 600,20 T1200,20 L1200,40 L0,40 Z" fill="var(--cream)" />
+          </svg>
         </div>
       </div>
 
-      {/* Bara de filtre sticky */}
-      <div className="sticky top-0 z-30 bg-white/90 dark:bg-zinc-900/90 backdrop-blur-md border-b border-zinc-100 dark:border-zinc-800 shadow-sm">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 py-3 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
-          <div className="flex gap-2 overflow-x-auto pb-0.5 scrollbar-hide flex-1">
+      {/* Sticky Controls */}
+      <div className="controls-bar">
+        <div className="controls-inner">
+          <div className="cat-list">
             {categorii.map(cat => (
               <button
                 key={cat}
+                className={`cat-btn ${catActiva === cat ? 'active' : ''}`}
                 onClick={() => setCatActiva(cat)}
-                className={`flex-shrink-0 px-4 py-1.5 rounded-full text-[11px] font-bold tracking-wide transition-all duration-200 ${
-                  catActiva === cat
-                    ? 'bg-zinc-950 text-white dark:bg-white dark:text-zinc-950 shadow-md'
-                    : 'bg-zinc-100 dark:bg-zinc-800 text-zinc-500 dark:text-zinc-400 hover:bg-zinc-200 dark:hover:bg-zinc-700'
-                }`}
               >
                 {cat}
               </button>
             ))}
           </div>
-          <div className="flex items-center gap-2 flex-shrink-0">
-            <div className="relative">
-              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-zinc-400 pointer-events-none">
-                <IcoSearch />
-              </span>
+          <div className="controls-right">
+            <div className="search-wrap">
+              <span className="search-icon"><IcoSearch /></span>
               <input
                 type="text"
                 value={search}
                 onChange={e => setSearch(e.target.value)}
-                placeholder="Caută..."
-                className="bg-zinc-100 dark:bg-zinc-800 border-0 text-zinc-700 dark:text-zinc-300 pl-8 pr-3 py-1.5 rounded-xl text-[11px] font-medium focus:outline-none focus:ring-2 focus:ring-rose-300 dark:focus:ring-rose-700 w-32 sm:w-40 placeholder-zinc-400"
+                placeholder="Caută flori..."
+                className="search-input"
               />
               {search && (
-                <button
-                  onClick={() => setSearch('')}
-                  className="absolute right-2.5 top-1/2 -translate-y-1/2 text-zinc-400 hover:text-zinc-600"
-                >
-                  <IcoClose />
-                </button>
+                <button className="search-clear" onClick={() => setSearch('')}><IcoClose size={12} /></button>
               )}
             </div>
-            <div className="relative" ref={sortRef}>
-              <button
-                onClick={() => setSortOpen(o => !o)}
-                className="flex items-center gap-1.5 bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-300 px-3 py-1.5 rounded-xl text-[11px] font-medium hover:bg-zinc-200 dark:hover:bg-zinc-700 transition-colors"
-              >
-                <IcoFilter />
-                {sortLabel}
-                <IcoChevronDown />
+            <div className="sort-wrap" ref={sortRef}>
+              <button className="sort-btn" onClick={() => setSortOpen(o => !o)}>
+                <span>{sortOptions.find(([v]) => v === sortare)?.[1]}</span>
+                <IcoChevron />
               </button>
               {sortOpen && (
-                <div className="absolute right-0 top-full mt-1 w-44 bg-white dark:bg-zinc-800 border border-zinc-100 dark:border-zinc-700 rounded-2xl shadow-xl overflow-hidden z-50"
-                  style={{ animation: 'slideUp .15s ease' }}>
-                  {[
-                    ['implicit', 'Implicit'],
-                    ['pret-asc', 'Preț: Mic → Mare'],
-                    ['pret-desc', 'Preț: Mare → Mic'],
-                    ['nume', 'Nume A–Z'],
-                  ].map(([val, label]) => (
+                <div className="sort-dropdown">
+                  {sortOptions.map(([val, label]) => (
                     <button
                       key={val}
+                      className={`sort-option ${sortare === val ? 'active' : ''}`}
                       onClick={() => { setSortare(val); setSortOpen(false); }}
-                      className={`w-full text-left px-4 py-2.5 text-[11px] font-medium transition-colors ${
-                        sortare === val
-                          ? 'bg-zinc-950 text-white dark:bg-white dark:text-zinc-900'
-                          : 'text-zinc-600 dark:text-zinc-300 hover:bg-zinc-50 dark:hover:bg-zinc-700'
-                      }`}
                     >
                       {label}
                     </button>
@@ -659,42 +600,34 @@ export default function Meniu({ setCartCount }) {
                 </div>
               )}
             </div>
-            <span className="hidden sm:block text-[11px] text-zinc-400 bg-zinc-100 dark:bg-zinc-800 px-2.5 py-1.5 rounded-xl font-medium">
-              {filtrate.length} {filtrate.length === 1 ? 'produs' : 'produse'}
-            </span>
           </div>
         </div>
       </div>
 
-      {/* Conținut principal */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 py-10">
+      {/* Content */}
+      <div className="content-area">
         {catActiva === 'Toate' && !search ? (
-          <div className="space-y-14">
+          <div className="sections-list">
             {categorii.filter(c => c !== 'Toate').map(cat => {
               const prodCat = filtrate.filter(p => p.categorie === cat);
-              if (prodCat.length === 0) return null;
+              if (!prodCat.length) return null;
               return (
-                <section key={cat}>
-                  <div className="flex items-center justify-between mb-6">
-                    <div className="flex items-center gap-3">
-                      <div className="w-1 h-8 bg-rose-400 rounded-full" />
-                      <h2 className="font-serif text-2xl text-zinc-900 dark:text-white">{cat}</h2>
-                      <span className="text-xs text-zinc-400 bg-zinc-100 dark:bg-zinc-800 px-2 py-0.5 rounded-full font-medium">
-                        {prodCat.length}
-                      </span>
+                <section key={cat} className="category-section">
+                  <div className="section-header">
+                    <div className="section-header-left">
+                      <h2 className="section-title">{cat}</h2>
+                      <span className="section-count">{prodCat.length} creații</span>
                     </div>
-                    <button
-                      onClick={() => setCatActiva(cat)}
-                      className="text-xs text-rose-400 hover:text-rose-600 font-semibold flex items-center gap-1 transition-colors"
-                    >
-                      Vezi toate <IcoArrow />
+                    <button className="btn-see-all" onClick={() => setCatActiva(cat)}>
+                      Vezi colecția <IcoArrow />
                     </button>
                   </div>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-                    {prodCat.slice(0, 4).map(produs => (
+                  <div className="products-grid">
+                    {prodCat.slice(0, 4).map((produs, i) => (
                       <Card
                         key={produs.id}
                         produs={produs}
+                        index={i}
                         onDetalii={setProdusSelectat}
                         onAdauga={adaugaInCos}
                         favorit={favorite.has(produs.id)}
@@ -703,12 +636,9 @@ export default function Meniu({ setCartCount }) {
                     ))}
                   </div>
                   {prodCat.length > 4 && (
-                    <div className="text-center mt-6">
-                      <button
-                        onClick={() => setCatActiva(cat)}
-                        className="inline-flex items-center gap-2 border border-zinc-200 dark:border-zinc-700 text-zinc-600 dark:text-zinc-300 hover:border-rose-400 hover:text-rose-500 px-6 py-2.5 rounded-2xl text-xs font-bold transition-all duration-200"
-                      >
-                        +{prodCat.length - 4} produse în "{cat}" <IcoArrow />
+                    <div className="load-more-wrap">
+                      <button className="btn-load-more" onClick={() => setCatActiva(cat)}>
+                        Descoperă +{prodCat.length - 4} aranjamente <IcoArrow />
                       </button>
                     </div>
                   )}
@@ -716,53 +646,46 @@ export default function Meniu({ setCartCount }) {
               );
             })}
           </div>
+        ) : filtrate.length === 0 ? (
+          <div className="empty-state">
+            <div className="empty-icon">🌷</div>
+            <p className="empty-title">Nicio creație găsită</p>
+            <div className="empty-actions">
+              {search && <button className="btn-reset" onClick={() => setSearch('')}>Resetează căutarea</button>}
+              {catActiva !== 'Toate' && <button className="btn-reset" onClick={() => setCatActiva('Toate')}>Toate colecțiile</button>}
+            </div>
+          </div>
         ) : (
-          filtrate.length === 0 ? (
-            <div className="flex flex-col items-center justify-center py-24 text-center">
-              <div className="text-6xl mb-4 opacity-30">🌷</div>
-              <p className="font-serif text-lg text-zinc-400">Nicio floare găsită.</p>
-              <div className="flex gap-2 mt-4">
-                {search && (
-                  <button onClick={() => setSearch('')} className="text-xs text-rose-400 hover:text-rose-600 font-semibold underline underline-offset-4">
-                    Șterge căutarea
-                  </button>
-                )}
-                {catActiva !== 'Toate' && (
-                  <button onClick={() => setCatActiva('Toate')} className="text-xs text-rose-400 hover:text-rose-600 font-semibold underline underline-offset-4">
-                    Resetează filtrul
-                  </button>
-                )}
+          <div className="filtered-section">
+            {catActiva !== 'Toate' && (
+              <div className="filtered-header">
+                <h2 className="section-title">{catActiva}</h2>
+                <span className="section-count">{filtrate.length} creații exclusive</span>
               </div>
+            )}
+            <div className="products-grid">
+              {filtrate.map((produs, i) => (
+                <Card
+                  key={produs.id}
+                  produs={produs}
+                  index={i}
+                  onDetalii={setProdusSelectat}
+                  onAdauga={adaugaInCos}
+                  favorit={favorite.has(produs.id)}
+                  onFavorit={toggleFavorit}
+                />
+              ))}
             </div>
-          ) : (
-            <div>
-              {catActiva !== 'Toate' && (
-                <div className="flex items-center gap-3 mb-8">
-                  <div className="w-1 h-8 bg-rose-400 rounded-full" />
-                  <h2 className="font-serif text-2xl text-zinc-900 dark:text-white">{catActiva}</h2>
-                  <span className="text-xs text-zinc-400 bg-zinc-100 dark:bg-zinc-800 px-2 py-0.5 rounded-full font-medium">
-                    {filtrate.length} produse
-                  </span>
-                </div>
-              )}
-              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-                {filtrate.map(produs => (
-                  <Card
-                    key={produs.id}
-                    produs={produs}
-                    onDetalii={setProdusSelectat}
-                    onAdauga={adaugaInCos}
-                    favorit={favorite.has(produs.id)}
-                    onFavorit={toggleFavorit}
-                  />
-                ))}
-              </div>
-            </div>
-          )
+          </div>
         )}
       </div>
 
-      {/* Modal detalii */}
+      {/* Reviews */}
+      <ReviewsSection />
+
+      {/* Footer — componenta colegului */}
+      <Footer />
+
       {produsSelectat && (
         <Modal
           produs={produsSelectat}
@@ -773,7 +696,6 @@ export default function Meniu({ setCartCount }) {
         />
       )}
 
-      {/* Coș drawer */}
       <CosDrawer
         open={cosOpen}
         onClose={() => setCosOpen(false)}
@@ -784,3 +706,710 @@ export default function Meniu({ setCartCount }) {
     </div>
   );
 }
+
+// ─── CSS ──────────────────────────────────────────────────────────────────────
+const CSS = `
+  @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Jost:wght@300;400;500;600&display=swap');
+
+  :root {
+    --cream: #FAF8F4;
+    --cream-dark: #F2EDE4;
+    --ink: #1A1612;
+    --ink-soft: #4A4540;
+    --ink-muted: #8A8480;
+    --rose: #C8516A;
+    --rose-light: #F5E8EB;
+    --rose-dark: #A03050;
+    --gold: #B8935A;
+    --gold-light: #F5EDD8;
+    --border: rgba(26,22,18,0.1);
+    --border-mid: rgba(26,22,18,0.18);
+    --shadow-sm: 0 2px 12px rgba(26,22,18,0.06);
+    --shadow-md: 0 8px 32px rgba(26,22,18,0.1);
+    --shadow-lg: 0 20px 60px rgba(26,22,18,0.14);
+    --font-serif: 'Cormorant Garamond', Georgia, serif;
+    --font-sans: 'Jost', system-ui, sans-serif;
+    --radius: 2px;
+    --radius-lg: 4px;
+    --transition: 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --cream: #131210;
+      --cream-dark: #1C1A16;
+      --ink: #F0EDE8;
+      --ink-soft: #C8C4BC;
+      --ink-muted: #7A7670;
+      --border: rgba(240,237,232,0.1);
+      --border-mid: rgba(240,237,232,0.18);
+      --shadow-sm: 0 2px 12px rgba(0,0,0,0.3);
+      --shadow-md: 0 8px 32px rgba(0,0,0,0.35);
+      --shadow-lg: 0 20px 60px rgba(0,0,0,0.4);
+      --rose-light: rgba(200,81,106,0.12);
+      --gold-light: rgba(184,147,90,0.12);
+    }
+  }
+
+  .meniu-root {
+    min-height: 100vh;
+    background: var(--cream);
+    color: var(--ink);
+    font-family: var(--font-sans);
+    font-weight: 300;
+  }
+
+  /* ── Hero ── */
+  .hero {
+    position: relative;
+    background: linear-gradient(160deg, var(--cream-dark) 0%, var(--cream) 100%);
+    border-bottom: 1px solid var(--border);
+    padding: 80px 24px 0;
+    text-align: center;
+    overflow: hidden;
+  }
+  .hero::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image: radial-gradient(ellipse 60% 50% at 50% 0%, rgba(200,81,106,0.06) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .hero-inner {
+    position: relative;
+    max-width: 680px;
+    margin: 0 auto;
+    padding-bottom: 52px;
+  }
+  .hero-eyebrow {
+    display: inline-block;
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.35em;
+    text-transform: uppercase;
+    color: var(--rose);
+    margin-bottom: 20px;
+  }
+  .hero-title {
+    font-family: var(--font-serif);
+    font-size: clamp(42px, 6vw, 72px);
+    font-weight: 300;
+    line-height: 1.05;
+    color: var(--ink);
+    margin: 0 0 20px;
+    letter-spacing: -0.01em;
+  }
+  .hero-title em { font-style: italic; color: var(--rose); font-weight: 300; }
+  .hero-sub {
+    font-size: 14px;
+    color: var(--ink-muted);
+    line-height: 1.75;
+    margin: 0 0 36px;
+    font-weight: 300;
+  }
+  .hero-divider { position: relative; margin: 0; }
+
+  .btn-hero-cart {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    background: var(--ink);
+    color: var(--cream);
+    border: none;
+    padding: 14px 32px;
+    font-family: var(--font-sans);
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    cursor: pointer;
+    position: relative;
+    transition: background var(--transition), transform 0.2s;
+  }
+  .btn-hero-cart:hover { background: var(--rose-dark); transform: translateY(-1px); }
+  .hero-cart-badge {
+    position: absolute;
+    top: -8px;
+    right: -8px;
+    background: var(--rose);
+    color: white;
+    font-size: 10px;
+    font-weight: 600;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  /* ── Controls ── */
+  .controls-bar {
+    position: sticky;
+    top: 0;
+    z-index: 30;
+    background: var(--cream);
+    border-bottom: 1px solid var(--border);
+    backdrop-filter: blur(12px);
+  }
+  .controls-inner {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 0 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+  .cat-list {
+    display: flex;
+    gap: 0;
+    overflow-x: auto;
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+    flex: 1;
+  }
+  .cat-list::-webkit-scrollbar { display: none; }
+  .cat-btn {
+    flex-shrink: 0;
+    padding: 16px 20px;
+    background: none;
+    border: none;
+    border-bottom: 2px solid transparent;
+    font-family: var(--font-sans);
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--ink-muted);
+    cursor: pointer;
+    transition: color 0.2s, border-color 0.2s;
+    white-space: nowrap;
+  }
+  .cat-btn:hover { color: var(--ink); }
+  .cat-btn.active { color: var(--rose); border-bottom-color: var(--rose); }
+
+  .controls-right {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-shrink: 0;
+    padding: 10px 0;
+  }
+
+  .search-wrap { position: relative; display: flex; align-items: center; }
+  .search-icon { position: absolute; left: 12px; color: var(--ink-muted); display: flex; align-items: center; }
+  .search-input {
+    background: var(--cream-dark);
+    border: 1px solid var(--border);
+    color: var(--ink);
+    font-family: var(--font-sans);
+    font-size: 11px;
+    font-weight: 400;
+    letter-spacing: 0.08em;
+    padding: 9px 32px 9px 34px;
+    width: 180px;
+    outline: none;
+    transition: border-color 0.2s, width 0.3s;
+    border-radius: var(--radius);
+  }
+  .search-input:focus { border-color: var(--ink-soft); width: 220px; }
+  .search-input::placeholder { color: var(--ink-muted); }
+  .search-clear {
+    position: absolute; right: 10px;
+    background: none; border: none;
+    color: var(--ink-muted); cursor: pointer;
+    display: flex; align-items: center; padding: 0;
+  }
+
+  .sort-wrap { position: relative; }
+  .sort-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--cream-dark);
+    border: 1px solid var(--border);
+    color: var(--ink-soft);
+    font-family: var(--font-sans);
+    font-size: 11px;
+    font-weight: 400;
+    letter-spacing: 0.08em;
+    padding: 9px 14px;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: border-color 0.2s;
+    border-radius: var(--radius);
+  }
+  .sort-btn:hover { border-color: var(--ink-soft); }
+  .sort-dropdown {
+    position: absolute;
+    right: 0;
+    top: calc(100% + 6px);
+    background: var(--cream);
+    border: 1px solid var(--border-mid);
+    box-shadow: var(--shadow-md);
+    min-width: 180px;
+    z-index: 50;
+    animation: dropIn 0.2s ease;
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+  }
+  .sort-option {
+    display: block; width: 100%; text-align: left;
+    background: none; border: none;
+    padding: 12px 18px;
+    font-family: var(--font-sans);
+    font-size: 11px; font-weight: 400;
+    letter-spacing: 0.08em;
+    color: var(--ink-soft); cursor: pointer;
+    transition: background 0.15s, color 0.15s;
+  }
+  .sort-option:hover { background: var(--cream-dark); color: var(--ink); }
+  .sort-option.active { color: var(--rose); font-weight: 500; }
+
+  /* ── Content Area ── */
+  .content-area {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 60px 24px 80px;
+  }
+  .sections-list { display: flex; flex-direction: column; gap: 72px; }
+
+  .section-header {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    margin-bottom: 32px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid var(--border);
+  }
+  .section-header-left { display: flex; align-items: baseline; gap: 12px; }
+  .section-title {
+    font-family: var(--font-serif);
+    font-size: 32px; font-weight: 300;
+    color: var(--ink); margin: 0;
+    letter-spacing: 0.01em;
+  }
+  .section-count {
+    font-size: 10px; font-weight: 500;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--ink-muted);
+  }
+  .btn-see-all {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: none; border: none;
+    font-family: var(--font-sans);
+    font-size: 10px; font-weight: 500;
+    letter-spacing: 0.15em; text-transform: uppercase;
+    color: var(--rose); cursor: pointer;
+    transition: gap 0.2s; white-space: nowrap;
+  }
+  .btn-see-all:hover { gap: 10px; }
+
+  /* ── Products Grid ── */
+  .products-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 28px;
+    justify-items: center;
+  }
+  @media (min-width: 900px) {
+    .products-grid {
+      grid-template-columns: repeat(auto-fit, minmax(260px, 300px));
+      justify-content: center;
+    }
+  }
+
+  /* ── Product Card ── */
+  .product-card {
+    display: flex;
+    flex-direction: column;
+    background: var(--cream);
+    border: 1px solid var(--border);
+    width: 100%;
+    max-width: 300px;
+    transition: box-shadow var(--transition), transform var(--transition), border-color var(--transition);
+    animation: fadeSlideUp 0.5s ease both;
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+  }
+  .product-card:hover {
+    box-shadow: var(--shadow-lg);
+    transform: translateY(-4px);
+    border-color: var(--border-mid);
+  }
+
+  .card-image-wrap {
+    position: relative;
+    overflow: hidden;
+    cursor: pointer;
+    aspect-ratio: 3/4;
+    background: var(--cream-dark);
+    flex-shrink: 0;
+  }
+  .card-img {
+    width: 100%; height: 100%; object-fit: cover;
+    transition: transform 1.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    display: block;
+  }
+  .card-img.hovered { transform: scale(1.06); }
+  .card-overlay {
+    position: absolute; inset: 0;
+    background: rgba(26,22,18,0.12);
+    opacity: 0; transition: opacity var(--transition);
+    pointer-events: none;
+  }
+  .card-overlay.visible { opacity: 1; }
+
+  .badge-discount {
+    position: absolute; top: 12px; right: 44px;
+    background: var(--rose); color: white;
+    font-size: 9px; font-weight: 600;
+    letter-spacing: 0.08em; padding: 4px 8px;
+    border-radius: 2px;
+  }
+
+  .btn-fav {
+    position: absolute; top: 12px; right: 12px;
+    width: 34px; height: 34px;
+    border-radius: 50%;
+    border: 1px solid rgba(255,255,255,0.5);
+    background: rgba(255,255,255,0.85);
+    backdrop-filter: blur(8px);
+    color: #9A9490;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer;
+    transition: background var(--transition), color var(--transition), border-color var(--transition), transform 0.2s;
+  }
+  .btn-fav:hover { transform: scale(1.1); }
+  .btn-fav.active { background: var(--rose); color: white; border-color: var(--rose); }
+
+  .card-quick-view {
+    position: absolute; bottom: 0; left: 0; right: 0;
+    display: flex; justify-content: center; padding: 16px;
+    opacity: 0; transform: translateY(8px);
+    transition: opacity var(--transition), transform var(--transition);
+    pointer-events: none;
+  }
+  .card-quick-view.visible { opacity: 1; transform: translateY(0); pointer-events: auto; }
+  .btn-quick-view {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: rgba(250,248,244,0.95);
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(255,255,255,0.6);
+    color: var(--ink);
+    font-family: var(--font-sans);
+    font-size: 10px; font-weight: 500;
+    letter-spacing: 0.12em; text-transform: uppercase;
+    padding: 9px 18px; cursor: pointer;
+    transition: background 0.2s;
+    border-radius: var(--radius);
+  }
+  .btn-quick-view:hover { background: white; }
+
+  .card-body {
+    padding: 20px; display: flex;
+    flex-direction: column; flex: 1; gap: 10px;
+  }
+  .card-meta { display: flex; align-items: center; justify-content: space-between; }
+  .card-category { font-size: 9px; font-weight: 600; letter-spacing: 0.2em; text-transform: uppercase; color: var(--rose); }
+  .card-title {
+    font-family: var(--font-serif);
+    font-size: 18px; font-weight: 400;
+    color: var(--ink); margin: 0; line-height: 1.3;
+    cursor: pointer; transition: color 0.2s;
+    letter-spacing: 0.01em;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  .card-title:hover { color: var(--rose); }
+  .card-desc {
+    font-size: 12px; color: var(--ink-muted);
+    line-height: 1.7; margin: 0;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    font-weight: 300;
+  }
+  .card-footer {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-top: auto; padding-top: 14px;
+    border-top: 1px solid var(--border);
+  }
+  .card-price { display: flex; flex-direction: column; gap: 2px; }
+  .price-main { font-size: 16px; font-weight: 500; color: var(--ink); letter-spacing: 0.03em; }
+  .price-old { font-size: 11px; color: var(--ink-muted); text-decoration: line-through; }
+
+  .btn-add {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: transparent;
+    border: 1px solid var(--border-mid);
+    color: var(--ink-soft);
+    font-family: var(--font-sans);
+    font-size: 9px; font-weight: 600;
+    letter-spacing: 0.15em; text-transform: uppercase;
+    padding: 9px 16px; cursor: pointer;
+    transition: all 0.25s ease;
+    border-radius: var(--radius);
+  }
+  .btn-add:hover { background: var(--ink); color: var(--cream); border-color: var(--ink); transform: translateY(-1px); }
+  .btn-add.added { background: #2d6a4f; color: white; border-color: #2d6a4f; }
+  .btn-add.disabled { background: transparent; color: var(--ink-muted); border-color: var(--border); cursor: not-allowed; opacity: 0.5; transform: none; }
+
+  .load-more-wrap { text-align: center; margin-top: 40px; }
+  .btn-load-more {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: transparent;
+    border: 1px solid var(--border-mid);
+    color: var(--ink-soft);
+    font-family: var(--font-sans);
+    font-size: 10px; font-weight: 500;
+    letter-spacing: 0.15em; text-transform: uppercase;
+    padding: 14px 32px; cursor: pointer;
+    transition: all var(--transition);
+    border-radius: var(--radius);
+  }
+  .btn-load-more:hover { background: var(--ink); color: var(--cream); border-color: var(--ink); }
+
+  .filtered-header {
+    display: flex; align-items: baseline; gap: 12px;
+    margin-bottom: 32px; padding-bottom: 16px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  /* ── Modal ── */
+  @keyframes backdropIn { from { opacity: 0 } to { opacity: 1 } }
+  @keyframes modalIn { from { opacity: 0; transform: translateY(16px) scale(0.98) } to { opacity: 1; transform: translateY(0) scale(1) } }
+
+  .modal-backdrop {
+    position: fixed; inset: 0;
+    background: rgba(10,8,5,0.6);
+    backdrop-filter: blur(12px);
+    z-index: 50;
+    display: flex; align-items: center; justify-content: center;
+    padding: 20px;
+    animation: backdropIn 0.25s ease;
+  }
+  .modal-box {
+    background: var(--cream);
+    max-width: 780px; width: 100%;
+    display: flex; flex-direction: row;
+    position: relative;
+    box-shadow: var(--shadow-lg);
+    animation: modalIn 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    border: 1px solid var(--border);
+  }
+  @media (max-width: 600px) { .modal-box { flex-direction: column; } }
+  .modal-close {
+    position: absolute; top: 14px; right: 14px; z-index: 20;
+    width: 32px; height: 32px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.9);
+    backdrop-filter: blur(8px);
+    border: 1px solid var(--border);
+    color: var(--ink-soft);
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer; transition: background 0.2s, color 0.2s;
+  }
+  .modal-close:hover { background: var(--ink); color: white; }
+  .modal-img-side {
+    position: relative; width: 45%; flex-shrink: 0;
+    min-height: 360px; overflow: hidden; background: var(--cream-dark);
+  }
+  @media (max-width: 600px) { .modal-img-side { width: 100%; min-height: 240px; } }
+  .modal-img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .modal-img-overlay { position: absolute; inset: 0; background: linear-gradient(to top, rgba(0,0,0,0.3) 0%, transparent 50%); pointer-events: none; }
+  .modal-cat-badge {
+    position: absolute; bottom: 16px; left: 16px;
+    background: rgba(250,248,244,0.92); backdrop-filter: blur(8px);
+    color: var(--ink);
+    font-size: 9px; font-weight: 600; letter-spacing: 0.18em;
+    text-transform: uppercase; padding: 5px 12px; border-radius: 2px;
+  }
+  .modal-fav-btn {
+    position: absolute; top: 16px; left: 16px;
+    width: 34px; height: 34px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.85); backdrop-filter: blur(8px);
+    border: 1px solid rgba(255,255,255,0.5);
+    color: #9A9490;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer; transition: all 0.2s;
+  }
+  .modal-fav-btn.active { background: var(--rose); color: white; border-color: var(--rose); }
+  .modal-content-side {
+    flex: 1; padding: 36px 32px;
+    display: flex; flex-direction: column; gap: 18px;
+    overflow-y: auto;
+  }
+  .modal-rating-row { display: flex; align-items: center; gap: 10px; }
+  .modal-review-count { font-size: 11px; color: var(--ink-muted); }
+  .modal-title { font-family: var(--font-serif); font-size: 28px; font-weight: 300; color: var(--ink); margin: 0; line-height: 1.2; letter-spacing: 0.01em; }
+  .modal-desc { font-size: 13px; color: var(--ink-muted); line-height: 1.7; margin: 0; font-weight: 300; }
+  .modal-features { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .modal-feature {
+    display: flex; align-items: flex-start; gap: 10px;
+    background: var(--cream-dark); border: 1px solid var(--border);
+    padding: 10px 12px; border-radius: var(--radius);
+  }
+  .feature-icon { font-size: 14px; line-height: 1; margin-top: 2px; }
+  .feature-label { font-size: 9px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink-muted); margin-bottom: 2px; }
+  .feature-value { font-size: 12px; color: var(--ink); font-weight: 400; }
+  .modal-price-row { display: flex; align-items: center; justify-content: space-between; }
+  .modal-price { font-size: 28px; font-weight: 300; color: var(--ink); letter-spacing: 0.02em; }
+  .modal-price-old { font-size: 14px; color: var(--ink-muted); text-decoration: line-through; margin-left: 8px; }
+  .modal-discount-badge { background: var(--rose-light); color: var(--rose-dark); font-size: 11px; font-weight: 600; letter-spacing: 0.06em; padding: 5px 12px; border-radius: 2px; }
+  .btn-modal-add {
+    width: 100%; display: flex; align-items: center; justify-content: center; gap: 10px;
+    background: var(--ink); color: var(--cream); border: none; padding: 16px;
+    font-family: var(--font-sans); font-size: 11px; font-weight: 500;
+    letter-spacing: 0.18em; text-transform: uppercase;
+    cursor: pointer; transition: background var(--transition), transform 0.2s;
+    border-radius: var(--radius); margin-top: auto;
+  }
+  .btn-modal-add:hover { background: var(--rose-dark); transform: translateY(-1px); }
+  .btn-modal-add:disabled { opacity: 0.45; cursor: not-allowed; transform: none; }
+
+  /* ── Drawer ── */
+  .drawer-backdrop {
+    position: fixed; inset: 0;
+    background: rgba(10,8,5,0.4); z-index: 40;
+    backdrop-filter: blur(4px);
+    animation: backdropIn 0.2s ease;
+  }
+  .drawer {
+    position: fixed; top: 0; right: 0;
+    height: 100%; width: 100%; max-width: 400px;
+    background: var(--cream); z-index: 50;
+    display: flex; flex-direction: column;
+    transform: translateX(100%);
+    transition: transform 0.45s cubic-bezier(0.16, 1, 0.3, 1);
+    border-left: 1px solid var(--border);
+  }
+  .drawer.open { transform: translateX(0); }
+  .drawer-header { display: flex; align-items: center; justify-content: space-between; padding: 24px; border-bottom: 1px solid var(--border); }
+  .drawer-title { font-family: var(--font-serif); font-size: 22px; font-weight: 300; color: var(--ink); margin: 0 0 2px; }
+  .drawer-subtitle { font-size: 10px; font-weight: 500; letter-spacing: 0.15em; text-transform: uppercase; color: var(--ink-muted); }
+  .drawer-close-btn { width: 34px; height: 34px; border-radius: 50%; background: var(--cream-dark); border: 1px solid var(--border); color: var(--ink-soft); display: flex; align-items: center; justify-content: center; cursor: pointer; transition: background 0.2s, color 0.2s; flex-shrink: 0; }
+  .drawer-close-btn:hover { background: var(--ink); color: var(--cream); }
+  .drawer-items { flex: 1; overflow-y: auto; padding: 20px 24px; display: flex; flex-direction: column; gap: 12px; }
+  .drawer-empty { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; text-align: center; gap: 8px; }
+  .drawer-empty-icon { font-size: 40px; opacity: 0.4; }
+  .drawer-empty-title { font-family: var(--font-serif); font-size: 18px; font-weight: 300; color: var(--ink-soft); margin: 0; }
+  .drawer-empty-sub { font-size: 11px; color: var(--ink-muted); letter-spacing: 0.08em; margin: 0; }
+  .drawer-item { display: flex; gap: 14px; align-items: center; background: var(--cream-dark); border: 1px solid var(--border); padding: 12px; border-radius: var(--radius-lg); }
+  .drawer-item-img { width: 56px; height: 56px; object-fit: cover; flex-shrink: 0; border-radius: 2px; }
+  .drawer-item-info { flex: 1; min-width: 0; }
+  .drawer-item-name { font-size: 13px; font-weight: 400; color: var(--ink); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin: 0 0 3px; }
+  .drawer-item-qty { font-size: 11px; color: var(--ink-muted); margin: 0; }
+  .drawer-item-right { display: flex; flex-direction: column; align-items: flex-end; gap: 4px; flex-shrink: 0; }
+  .drawer-item-total { font-size: 13px; font-weight: 500; color: var(--ink); }
+  .drawer-item-remove { background: none; border: none; font-family: var(--font-sans); font-size: 9px; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-muted); cursor: pointer; transition: color 0.2s; padding: 0; }
+  .drawer-item-remove:hover { color: var(--rose); }
+  .drawer-footer { padding: 20px 24px; border-top: 1px solid var(--border); background: var(--cream); display: flex; flex-direction: column; gap: 12px; }
+  .drawer-total-row { display: flex; align-items: baseline; justify-content: space-between; }
+  .drawer-total-label { font-size: 10px; font-weight: 500; letter-spacing: 0.15em; text-transform: uppercase; color: var(--ink-muted); }
+  .drawer-total-val { font-family: var(--font-serif); font-size: 26px; font-weight: 300; color: var(--ink); }
+  .btn-checkout { width: 100%; display: flex; align-items: center; justify-content: center; gap: 10px; background: var(--ink); color: var(--cream); border: none; padding: 16px; font-family: var(--font-sans); font-size: 11px; font-weight: 500; letter-spacing: 0.18em; text-transform: uppercase; cursor: pointer; transition: background var(--transition); border-radius: var(--radius); }
+  .btn-checkout:hover { background: var(--rose-dark); }
+  .btn-clear-cart { background: none; border: none; width: 100%; font-family: var(--font-sans); font-size: 9px; font-weight: 500; letter-spacing: 0.15em; text-transform: uppercase; color: var(--ink-muted); cursor: pointer; transition: color 0.2s; padding: 4px 0; }
+  .btn-clear-cart:hover { color: var(--rose); }
+
+  /* ── Toast ── */
+  @keyframes toastIn { from { opacity: 0; transform: translateX(-50%) translateY(16px) } to { opacity: 1; transform: translateX(-50%) translateY(0) } }
+  .toast {
+    position: fixed; bottom: 28px; left: 50%;
+    transform: translateX(-50%);
+    z-index: 60;
+    background: var(--ink); color: var(--cream);
+    display: inline-flex; align-items: center; gap: 12px;
+    padding: 13px 22px;
+    font-family: var(--font-sans); font-size: 11px; font-weight: 400;
+    letter-spacing: 0.06em;
+    box-shadow: var(--shadow-lg);
+    animation: toastIn 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    white-space: nowrap;
+    border-radius: var(--radius);
+    border: 1px solid rgba(255,255,255,0.1);
+  }
+  .toast-check { color: #52b788; font-weight: 700; }
+  .toast-name { max-width: 160px; overflow: hidden; text-overflow: ellipsis; font-weight: 500; }
+  .toast-label { color: rgba(250,248,244,0.55); }
+
+  /* ── Empty / Error ── */
+  .empty-state, .error-state { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 80px 24px; text-align: center; gap: 12px; }
+  .empty-icon, .error-icon { font-size: 44px; opacity: 0.35; }
+  .empty-title, .error-title { font-family: var(--font-serif); font-size: 24px; font-weight: 300; color: var(--ink-soft); margin: 0; }
+  .empty-actions { display: flex; gap: 16px; margin-top: 8px; }
+  .btn-reset { background: none; border: none; font-family: var(--font-sans); font-size: 11px; font-weight: 500; letter-spacing: 0.12em; text-transform: uppercase; color: var(--rose); cursor: pointer; text-decoration: underline; text-underline-offset: 4px; }
+  .error-msg { font-size: 13px; color: var(--ink-muted); margin: 0; max-width: 360px; }
+  .error-tips { background: var(--cream-dark); border: 1px solid var(--border); padding: 16px 20px; text-align: left; font-size: 12px; color: var(--ink-soft); display: flex; flex-direction: column; gap: 6px; max-width: 360px; width: 100%; border-radius: var(--radius-lg); margin-top: 4px; line-height: 1.6; }
+
+  /* ── Skeleton ── */
+  @keyframes shimmer { from { background-position: -400px 0 } to { background-position: 400px 0 } }
+  .loading-grid { max-width: 1280px; margin: 60px auto; padding: 0 24px; display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 28px; }
+  .skeleton-card { border: 1px solid var(--border); border-radius: var(--radius-lg); overflow: hidden; }
+  .skeleton-img { aspect-ratio: 3/4; background: linear-gradient(90deg, var(--cream-dark) 25%, var(--cream) 50%, var(--cream-dark) 75%); background-size: 800px 100%; animation: shimmer 1.5s infinite; }
+  .skeleton-body { padding: 20px; display: flex; flex-direction: column; gap: 10px; }
+  .skeleton-line { height: 12px; border-radius: 2px; background: linear-gradient(90deg, var(--cream-dark) 25%, var(--cream) 50%, var(--cream-dark) 75%); background-size: 800px 100%; animation: shimmer 1.5s infinite; }
+  .skeleton-line.short { width: 40%; }
+  .skeleton-line.medium { width: 70%; }
+  .skeleton-line.long { width: 90%; }
+
+  /* ── Animations ── */
+  @keyframes fadeSlideUp { from { opacity: 0; transform: translateY(20px) } to { opacity: 1; transform: translateY(0) } }
+  @keyframes dropIn { from { opacity: 0; transform: translateY(-6px) } to { opacity: 1; transform: translateY(0) } }
+
+  /* ══════════════════════════════════════════════════
+     REVIEWS SECTION
+  ══════════════════════════════════════════════════ */
+  .reviews-section {
+    background: var(--cream-dark);
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    padding: 80px 24px;
+    position: relative;
+    overflow: hidden;
+  }
+  .reviews-section::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse 70% 60% at 50% 100%, rgba(200,81,106,0.05) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .reviews-inner { max-width: 1280px; margin: 0 auto; position: relative; }
+  .reviews-header { text-align: center; margin-bottom: 56px; }
+  .reviews-eyebrow { display: inline-block; font-size: 10px; font-weight: 500; letter-spacing: 0.35em; text-transform: uppercase; color: var(--rose); margin-bottom: 16px; }
+  .reviews-title { font-family: var(--font-serif); font-size: clamp(30px, 4vw, 48px); font-weight: 300; color: var(--ink); margin: 0 0 12px; line-height: 1.1; }
+  .reviews-sub { font-size: 13px; color: var(--ink-muted); font-weight: 300; margin: 0 0 28px; line-height: 1.6; }
+  .reviews-aggregate { display: inline-flex; align-items: center; gap: 16px; background: var(--cream); border: 1px solid var(--border); padding: 14px 24px; border-radius: var(--radius-lg); }
+  .reviews-score { font-family: var(--font-serif); font-size: 40px; font-weight: 300; color: var(--ink); line-height: 1; }
+  .reviews-count-label { font-size: 10px; color: var(--ink-muted); letter-spacing: 0.08em; font-weight: 400; }
+  .reviews-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-bottom: 40px; }
+  @media (max-width: 900px) { .reviews-grid { grid-template-columns: 1fr 1fr; } }
+  @media (max-width: 600px) { .reviews-grid { grid-template-columns: 1fr; } }
+  .review-card { background: var(--cream); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 28px; display: flex; flex-direction: column; gap: 14px; position: relative; transition: box-shadow var(--transition), transform var(--transition), border-color var(--transition); animation: fadeSlideUp 0.5s ease both; }
+  .review-card:hover { box-shadow: var(--shadow-md); transform: translateY(-3px); border-color: var(--border-mid); }
+  .review-quote-icon { position: absolute; top: 20px; right: 20px; color: var(--rose); }
+  .review-stars { display: flex; gap: 3px; }
+  .review-text { font-family: var(--font-serif); font-size: 15px; font-weight: 300; color: var(--ink-soft); line-height: 1.7; margin: 0; flex: 1; font-style: italic; }
+  .review-tag { display: inline-block; background: var(--rose-light); color: var(--rose-dark); font-size: 9px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; padding: 4px 10px; border-radius: 2px; align-self: flex-start; }
+  .review-author { display: flex; align-items: center; gap: 12px; padding-top: 14px; border-top: 1px solid var(--border); margin-top: auto; }
+  .review-avatar { width: 38px; height: 38px; border-radius: 50%; background: linear-gradient(135deg, var(--rose-light) 0%, var(--gold-light) 100%); border: 1px solid var(--border-mid); display: flex; align-items: center; justify-content: center; font-family: var(--font-serif); font-size: 16px; font-weight: 400; color: var(--rose-dark); flex-shrink: 0; }
+  .review-name { font-size: 13px; font-weight: 500; color: var(--ink); margin-bottom: 2px; }
+  .review-date { font-size: 10px; color: var(--ink-muted); letter-spacing: 0.06em; }
+  .reviews-nav { display: flex; align-items: center; justify-content: center; gap: 20px; }
+  .reviews-nav-btn { width: 38px; height: 38px; border-radius: 50%; background: var(--cream); border: 1px solid var(--border-mid); color: var(--ink-soft); display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s; }
+  .reviews-nav-btn:hover { background: var(--ink); color: var(--cream); border-color: var(--ink); }
+  .reviews-dots { display: flex; gap: 8px; align-items: center; }
+  .reviews-dot { width: 6px; height: 6px; border-radius: 50%; border: none; background: var(--border-mid); cursor: pointer; padding: 0; transition: all 0.25s ease; }
+  .reviews-dot.active { background: var(--rose); width: 20px; border-radius: 3px; }
+`;
