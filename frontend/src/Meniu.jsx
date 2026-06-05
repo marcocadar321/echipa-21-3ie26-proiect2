@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import Footer from './components/layout/Footer';
+import { useCart } from './context/CartContext';
 
 const STRAPI_URL = 'http://localhost:1337';
 
@@ -276,63 +277,6 @@ const Modal = ({ produs, onClose, onAdauga, favorit, onFavorit }) => {
   );
 };
 
-// ─── Coș Drawer ───────────────────────────────────────────────────────────────
-const CosDrawer = ({ open, onClose, items, onRemove, onClear }) => {
-  const total = items.reduce((s, i) => s + i.pret * i.qty, 0);
-  return (
-    <>
-      {open && <div className="drawer-backdrop" onClick={onClose} />}
-      <div className={`drawer ${open ? 'open' : ''}`}>
-        <div className="drawer-header">
-          <div>
-            <h2 className="drawer-title">Selecția Ta</h2>
-            <p className="drawer-subtitle">{items.length} {items.length === 1 ? 'aranjament' : 'aranjamente'}</p>
-          </div>
-          <button className="drawer-close-btn" onClick={onClose}><IcoClose /></button>
-        </div>
-        <div className="drawer-items">
-          {items.length === 0 ? (
-            <div className="drawer-empty">
-              <div className="drawer-empty-icon">💐</div>
-              <p className="drawer-empty-title">Atelierul te așteaptă</p>
-              <p className="drawer-empty-sub">Adaugă flori din colecție</p>
-            </div>
-          ) : (
-            items.map((item) => (
-              <div key={item.id} className="drawer-item">
-                <img
-                  src={item.imagine}
-                  alt={item.nume}
-                  onError={(e) => { e.target.src = 'https://images.unsplash.com/photo-1490750967868-88df5691cc45?w=100&q=80'; }}
-                  className="drawer-item-img"
-                />
-                <div className="drawer-item-info">
-                  <p className="drawer-item-name">{item.nume}</p>
-                  <p className="drawer-item-qty">{item.qty} × {item.pret} RON</p>
-                </div>
-                <div className="drawer-item-right">
-                  <span className="drawer-item-total">{item.qty * item.pret} RON</span>
-                  <button className="drawer-item-remove" onClick={() => onRemove(item.id)}>Elimină</button>
-                </div>
-              </div>
-            ))
-          )}
-        </div>
-        {items.length > 0 && (
-          <div className="drawer-footer">
-            <div className="drawer-total-row">
-              <span className="drawer-total-label">Total</span>
-              <span className="drawer-total-val">{total} RON</span>
-            </div>
-            <button className="btn-checkout">Finalizează Comanda <IcoArrow /></button>
-            <button className="btn-clear-cart" onClick={onClear}>Golește coșul</button>
-          </div>
-        )}
-      </div>
-    </>
-  );
-};
-
 // ─── Reviews Section ──────────────────────────────────────────────────────────
 const REVIEWS = [
   { id: 1, nume: 'Alexandra M.', rating: 5, data: '18 mai 2025', text: 'Am comandat un buchet pentru mama de ziua ei și a fost absolut superb! Florile erau proaspete, aranjamentul impecabil, iar livrarea a ajuns exact la timp. Cu siguranță voi mai comanda.', tag: 'Buchet aniversar', avatar: 'A' },
@@ -413,7 +357,9 @@ const ReviewsSection = () => {
 };
 
 // ─── Main Component ───────────────────────────────────────────────────────────
-export default function Meniu({ setCartCount }) {
+export default function Meniu() {
+  const { addItem, totalQty, setCosOpen } = useCart();
+
   const [produse, setProduse] = useState([]);
   const [categorii, setCategorii] = useState(['Toate']);
   const [catActiva, setCatActiva] = useState('Toate');
@@ -423,8 +369,6 @@ export default function Meniu({ setCartCount }) {
   const [sortare, setSortare] = useState('implicit');
   const [produsSelectat, setProdusSelectat] = useState(null);
   const [favorite, setFavorite] = useState(new Set());
-  const [cos, setCos] = useState([]);
-  const [cosOpen, setCosOpen] = useState(false);
   const [toast, setToast] = useState(null);
   const [sortOpen, setSortOpen] = useState(false);
   const sortRef = useRef(null);
@@ -463,28 +407,13 @@ export default function Meniu({ setCartCount }) {
       return 0;
     });
 
+  // Folosim addItem din CartContext
   const adaugaInCos = (produs) => {
-    setCos(prev => {
-      const exist = prev.find(i => i.id === produs.id);
-      if (exist) return prev.map(i => i.id === produs.id ? { ...i, qty: i.qty + 1 } : i);
-      return [...prev, { ...produs, qty: 1 }];
-    });
-    if (setCartCount) setCartCount(prev => prev + 1);
+    addItem(produs);
     setToast(produs.nume);
     setTimeout(() => setToast(null), 3000);
   };
 
-  const eliminaDinCos = (id) => {
-    setCos(prev => {
-      const item = prev.find(i => i.id === id);
-      if (!item) return prev;
-      if (setCartCount) setCartCount(c => Math.max(0, c - item.qty));
-      return prev.filter(i => i.id !== id);
-    });
-  };
-
-  const golesteCos = () => { if (setCartCount) setCartCount(0); setCos([]); };
-  const totalCos = cos.reduce((s, i) => s + i.qty, 0);
   const toggleFavorit = (id) => setFavorite(prev => { const n = new Set(prev); n.has(id) ? n.delete(id) : n.add(id); return n; });
 
   const sortOptions = [
@@ -543,7 +472,7 @@ export default function Meniu({ setCartCount }) {
           <button className="btn-hero-cart" onClick={() => setCosOpen(true)}>
             <IcoCart size={14} />
             <span>Vizualizează selecția</span>
-            {totalCos > 0 && <span className="hero-cart-badge">{totalCos}</span>}
+            {totalQty > 0 && <span className="hero-cart-badge">{totalQty}</span>}
           </button>
         </div>
         <div className="hero-divider">
@@ -683,7 +612,7 @@ export default function Meniu({ setCartCount }) {
       {/* Reviews */}
       <ReviewsSection />
 
-      {/* Footer — componenta colegului */}
+      {/* Footer */}
       <Footer />
 
       {produsSelectat && (
@@ -695,14 +624,6 @@ export default function Meniu({ setCartCount }) {
           onFavorit={toggleFavorit}
         />
       )}
-
-      <CosDrawer
-        open={cosOpen}
-        onClose={() => setCosOpen(false)}
-        items={cos}
-        onRemove={eliminaDinCos}
-        onClear={golesteCos}
-      />
     </div>
   );
 }
@@ -1276,51 +1197,6 @@ const CSS = `
   }
   .btn-modal-add:hover { background: var(--rose-dark); transform: translateY(-1px); }
   .btn-modal-add:disabled { opacity: 0.45; cursor: not-allowed; transform: none; }
-
-  /* ── Drawer ── */
-  .drawer-backdrop {
-    position: fixed; inset: 0;
-    background: rgba(10,8,5,0.4); z-index: 40;
-    backdrop-filter: blur(4px);
-    animation: backdropIn 0.2s ease;
-  }
-  .drawer {
-    position: fixed; top: 0; right: 0;
-    height: 100%; width: 100%; max-width: 400px;
-    background: var(--cream); z-index: 50;
-    display: flex; flex-direction: column;
-    transform: translateX(100%);
-    transition: transform 0.45s cubic-bezier(0.16, 1, 0.3, 1);
-    border-left: 1px solid var(--border);
-  }
-  .drawer.open { transform: translateX(0); }
-  .drawer-header { display: flex; align-items: center; justify-content: space-between; padding: 24px; border-bottom: 1px solid var(--border); }
-  .drawer-title { font-family: var(--font-serif); font-size: 22px; font-weight: 300; color: var(--ink); margin: 0 0 2px; }
-  .drawer-subtitle { font-size: 10px; font-weight: 500; letter-spacing: 0.15em; text-transform: uppercase; color: var(--ink-muted); }
-  .drawer-close-btn { width: 34px; height: 34px; border-radius: 50%; background: var(--cream-dark); border: 1px solid var(--border); color: var(--ink-soft); display: flex; align-items: center; justify-content: center; cursor: pointer; transition: background 0.2s, color 0.2s; flex-shrink: 0; }
-  .drawer-close-btn:hover { background: var(--ink); color: var(--cream); }
-  .drawer-items { flex: 1; overflow-y: auto; padding: 20px 24px; display: flex; flex-direction: column; gap: 12px; }
-  .drawer-empty { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; text-align: center; gap: 8px; }
-  .drawer-empty-icon { font-size: 40px; opacity: 0.4; }
-  .drawer-empty-title { font-family: var(--font-serif); font-size: 18px; font-weight: 300; color: var(--ink-soft); margin: 0; }
-  .drawer-empty-sub { font-size: 11px; color: var(--ink-muted); letter-spacing: 0.08em; margin: 0; }
-  .drawer-item { display: flex; gap: 14px; align-items: center; background: var(--cream-dark); border: 1px solid var(--border); padding: 12px; border-radius: var(--radius-lg); }
-  .drawer-item-img { width: 56px; height: 56px; object-fit: cover; flex-shrink: 0; border-radius: 2px; }
-  .drawer-item-info { flex: 1; min-width: 0; }
-  .drawer-item-name { font-size: 13px; font-weight: 400; color: var(--ink); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin: 0 0 3px; }
-  .drawer-item-qty { font-size: 11px; color: var(--ink-muted); margin: 0; }
-  .drawer-item-right { display: flex; flex-direction: column; align-items: flex-end; gap: 4px; flex-shrink: 0; }
-  .drawer-item-total { font-size: 13px; font-weight: 500; color: var(--ink); }
-  .drawer-item-remove { background: none; border: none; font-family: var(--font-sans); font-size: 9px; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-muted); cursor: pointer; transition: color 0.2s; padding: 0; }
-  .drawer-item-remove:hover { color: var(--rose); }
-  .drawer-footer { padding: 20px 24px; border-top: 1px solid var(--border); background: var(--cream); display: flex; flex-direction: column; gap: 12px; }
-  .drawer-total-row { display: flex; align-items: baseline; justify-content: space-between; }
-  .drawer-total-label { font-size: 10px; font-weight: 500; letter-spacing: 0.15em; text-transform: uppercase; color: var(--ink-muted); }
-  .drawer-total-val { font-family: var(--font-serif); font-size: 26px; font-weight: 300; color: var(--ink); }
-  .btn-checkout { width: 100%; display: flex; align-items: center; justify-content: center; gap: 10px; background: var(--ink); color: var(--cream); border: none; padding: 16px; font-family: var(--font-sans); font-size: 11px; font-weight: 500; letter-spacing: 0.18em; text-transform: uppercase; cursor: pointer; transition: background var(--transition); border-radius: var(--radius); }
-  .btn-checkout:hover { background: var(--rose-dark); }
-  .btn-clear-cart { background: none; border: none; width: 100%; font-family: var(--font-sans); font-size: 9px; font-weight: 500; letter-spacing: 0.15em; text-transform: uppercase; color: var(--ink-muted); cursor: pointer; transition: color 0.2s; padding: 4px 0; }
-  .btn-clear-cart:hover { color: var(--rose); }
 
   /* ── Toast ── */
   @keyframes toastIn { from { opacity: 0; transform: translateX(-50%) translateY(16px) } to { opacity: 1; transform: translateX(-50%) translateY(0) } }

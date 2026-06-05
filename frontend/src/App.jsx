@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 
+import { CartProvider } from './context/CartContext';
 import Navbar from './Navbar';
+import CartDrawer from './components/layout/CartDrawer';
 import CookieBanner from './components/layout/CookieBanner';
 
 import HomePage from './pages/HomePage';
@@ -11,9 +13,6 @@ import TermeniConditii from './pages/TermeniConditii';
 
 function App() {
   const [darkMode, setDarkMode] = useState(false);
-  const [searchQuery, setSearchQuery] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState('Toate');
-  const [cartCount, setCartCount] = useState(0);
 
   useEffect(() => {
     if (darkMode) {
@@ -25,48 +24,31 @@ function App() {
 
   return (
     <Router>
-      <div className="App min-h-screen bg-white dark:bg-gray-900 text-black dark:text-white transition-colors duration-200">
+      <CartProvider>
+        <div className="App min-h-screen bg-white dark:bg-gray-900 text-black dark:text-white transition-colors duration-200">
 
-        {/* Navbar vizibil pe toate paginile */}
-        <Navbar
-          darkMode={darkMode}
-          setDarkMode={setDarkMode}
-          cartCount={cartCount}
-        />
+          {/* Navbar vizibil pe toate paginile */}
+          <Navbar darkMode={darkMode} setDarkMode={setDarkMode} />
 
-        {/* Conținut pagini */}
-        <Routes>
-          <Route path="/" element={<HomePage />} />
+          {/* Pagini */}
+          <Routes>
+            <Route path="/" element={<HomePage />} />
+            <Route path="/meniu" element={<Meniu />} />
+            <Route path="/aranjamente" element={<Meniu />} />
 
-          <Route
-            path="/meniu"
-            element={
-              <Meniu
-                searchQuery={searchQuery}
-                setSearchQuery={setSearchQuery}
-              />
-            }
-          />
+            {/* Pagini GDPR */}
+            <Route path="/politica-confidentialitate" element={<PoliticaConfidentialitate />} />
+            <Route path="/termeni-conditii" element={<TermeniConditii />} />
+          </Routes>
 
-          <Route
-            path="/aranjamente"
-            element={
-              <Meniu
-                searchQuery={searchQuery}
-                setSearchQuery={setSearchQuery}
-              />
-            }
-          />
+          {/* Coș drawer — global, disponibil pe toate paginile */}
+          <CartDrawer />
 
-          {/* Pagini GDPR */}
-          <Route path="/politica-confidentialitate" element={<PoliticaConfidentialitate />} />
-          <Route path="/termeni-conditii" element={<TermeniConditii />} />
-        </Routes>
+          {/* Banner cookie GDPR */}
+          <CookieBanner />
 
-        {/* Banner cookie GDPR — apare pe toate paginile */}
-        <CookieBanner />
-
-      </div>
+        </div>
+      </CartProvider>
     </Router>
   );
 }

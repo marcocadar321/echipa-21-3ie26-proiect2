@@ -1,4 +1,5 @@
 import { Link, useLocation } from 'react-router-dom';
+import { useCart } from './context/CartContext';
 
 const NAV_LINKS = [
   { name: "Acasă", path: "/" },
@@ -9,6 +10,7 @@ const NAV_LINKS = [
 
 const Navbar = () => {
   const location = useLocation();
+  const { totalQty, setCosOpen } = useCart();
 
   return (
     <>
@@ -103,6 +105,10 @@ const Navbar = () => {
           color: #6b4a5e;
           transition: color 0.25s ease, background 0.25s ease;
           white-space: nowrap;
+          background: none;
+          border: none;
+          cursor: pointer;
+          font-family: 'Jost', sans-serif;
         }
 
         .nav-link:hover {
@@ -149,40 +155,84 @@ const Navbar = () => {
           transform: scaleX(1);
         }
 
+        /* Coș button — stilizat ca link, cu badge cantitate */
+        .nav-cart-link {
+          position: relative;
+          display: flex;
+          align-items: center;
+          gap: 6px;
+          padding: 6px 18px;
+          border-radius: 9999px;
+          font-size: 0.82rem;
+          font-weight: 400;
+          letter-spacing: 0.08em;
+          text-transform: uppercase;
+          color: #6b4a5e;
+          transition: color 0.25s ease, background 0.25s ease;
+          white-space: nowrap;
+          background: none;
+          border: none;
+          cursor: pointer;
+          font-family: 'Jost', sans-serif;
+        }
+
+        .nav-cart-link:hover {
+          color: #be185d;
+          background: rgba(251, 207, 232, 0.25);
+        }
+
+        .nav-cart-link .nav-dot {
+          width: 4px;
+          height: 4px;
+          border-radius: 9999px;
+          flex-shrink: 0;
+          background: linear-gradient(135deg, #ec4899, #16a34a);
+          opacity: 0;
+          transition: opacity 0.25s ease;
+        }
+        .nav-cart-link:hover .nav-dot { opacity: 1; }
+
+        .nav-cart-link .nav-underline {
+          position: absolute;
+          bottom: 0;
+          left: 18px;
+          right: 18px;
+          height: 1.5px;
+          border-radius: 2px;
+          background: linear-gradient(90deg, #be185d, #ec4899, #16a34a);
+          transform: scaleX(0);
+          transform-origin: center;
+          transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        .nav-cart-link:hover .nav-underline { transform: scaleX(1); }
+
+        .nav-cart-badge {
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          min-width: 16px;
+          height: 16px;
+          border-radius: 9999px;
+          background: linear-gradient(135deg, #be185d, #ec4899);
+          font-size: 9px;
+          font-weight: 600;
+          color: white;
+          padding: 0 4px;
+          font-family: 'Jost', sans-serif;
+          margin-left: 2px;
+          animation: badgePop 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+          line-height: 1;
+        }
+
+        @keyframes badgePop {
+          from { transform: scale(0); }
+          to   { transform: scale(1); }
+        }
+
         .nav-actions {
           display: flex;
           align-items: center;
-          gap: 10px;
-        }
-
-        .nav-icon-btn {
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          width: 36px;
-          height: 36px;
-          border-radius: 9999px;
-          border: none;
-          background: none;
-          color: #9d6b8a;
-          cursor: pointer;
-          transition: background 0.2s ease, color 0.2s ease, transform 0.2s ease;
-          position: relative;
-        }
-
-        .nav-icon-btn:hover {
-          background: rgba(251, 207, 232, 0.4);
-          color: #be185d;
-          transform: scale(1.1);
-        }
-
-        .nav-badge {
-          position: absolute;
-          top: 4px; right: 4px;
-          width: 8px; height: 8px;
-          border-radius: 9999px;
-          border: 1.5px solid #fff8f9;
-          background: linear-gradient(135deg, #be185d, #ec4899);
+          gap: 4px;
         }
 
         .nav-separator {
@@ -250,27 +300,23 @@ const Navbar = () => {
           {/* ACȚIUNI */}
           <div className="nav-actions">
 
-            {/* Căutare */}
-            <button className="nav-icon-btn" aria-label="Căutare">
-              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-                <circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/>
-              </svg>
-            </button>
-
-            {/* Coș */}
-            <button className="nav-icon-btn" aria-label="Coș de cumpărături">
-              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/>
-              </svg>
-              <span className="nav-badge" />
+            {/* Coș — buton stilizat ca link nav */}
+            <button
+              className="nav-cart-link"
+              aria-label="Coș de cumpărături"
+              onClick={() => setCosOpen(true)}
+            >
+              <span className="nav-dot" />
+              Coș
+              {totalQty > 0 && (
+                <span className="nav-cart-badge">{totalQty}</span>
+              )}
+              <span className="nav-underline" />
             </button>
 
             <div className="nav-separator" />
 
-            {/* CTA */}
-            <Link to="/comanda" className="nav-cta">
-              Comandă
-            </Link>
+            
 
           </div>
         </div>
