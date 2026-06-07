@@ -1,6 +1,20 @@
 import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+<<<<<<< HEAD
 import ContactPage from './pages/ContactPage';
+=======
+
+import { CartProvider } from './context/CartContext';
+import Navbar from './Navbar';
+import CartDrawer from './components/layout/CartDrawer';
+import CookieBanner from './components/layout/CookieBanner';
+
+import HomePage from './pages/HomePage';
+import Meniu from './Meniu';
+import PoliticaConfidentialitate from './pages/PoliticaConfidentialitate';
+import TermeniConditii from './pages/TermeniConditii';
+import AboutPage from './pages/AboutPage';
+>>>>>>> 92d9bff (Adaugare pagina About)
 
 function App() {
   const [darkMode, setDarkMode] = useState(false);
@@ -15,13 +29,26 @@ function App() {
 
   return (
     <Router>
-      <div className="App">
-        <h1>Proiectul meu</h1>
-        {/* Aici vom adăuga Navbar-ul și Rutele ulterior */}
-        <Routes>
-          <Route path="/contact" element={<ContactPage />} />
-        </Routes>
-      </div>
+<CartProvider>
+  <div className="App min-h-screen bg-white dark:bg-gray-900 text-black dark:text-white transition-colors duration-200">
+
+    <Navbar darkMode={darkMode} setDarkMode={setDarkMode} />
+
+    <Routes>
+      <Route path="/" element={<HomePage />} />
+      <Route path="/meniu" element={<Meniu />} />
+      <Route path="/aranjamente" element={<Meniu />} />
+
+      <Route path="/politica-confidentialitate" element={<PoliticaConfidentialitate />} />
+      <Route path="/termeni-conditii" element={<TermeniConditii />} />
+      <Route path="/despre-noi" element={<AboutPage />} />
+    </Routes>
+
+    <CartDrawer />
+    <CookieBanner />
+
+  </div>
+</CartProvider>
     </Router>
   );
 }

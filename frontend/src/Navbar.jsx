@@ -3,7 +3,7 @@ import { useCart } from './context/CartContext';
 
 const NAV_LINKS = [
   { name: "Acasă", path: "/" },
-  { name: "Despre", path: "/despre" },
+  { name: "Despre", path: "/despre-noi" },
   { name: "Meniu", path: "/aranjamente" },
   { name: "Contact", path: "/contact" },
 ];
