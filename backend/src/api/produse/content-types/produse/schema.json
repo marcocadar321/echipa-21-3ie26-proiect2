@@ -1,0 +1,71 @@
+{
+  "kind": "collectionType",
+  "collectionName": "produses",
+  "info": {
+    "singularName": "produse",
+    "pluralName": "produses",
+    "displayName": "Produse"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "Nume": {
+      "type": "string",
+      "required": true
+    },
+    "Slug": {
+      "type": "uid",
+      "targetField": "Nume"
+    },
+    "Pret": {
+      "type": "decimal"
+    },
+    "PretVechi": {
+      "type": "decimal"
+    },
+    "Descriere": {
+      "type": "text"
+    },
+    "Imagine": {
+      "type": "media",
+      "multiple": false,
+      "allowedTypes": [
+        "images",
+        "files",
+        "videos",
+        "audios"
+      ]
+    },
+    "Imagini": {
+      "type": "media",
+      "multiple": true,
+      "allowedTypes": [
+        "images",
+        "files",
+        "videos",
+        "audios"
+      ]
+    },
+    "Eticheta": {
+      "type": "enumeration",
+      "enum": [
+        "Nou",
+        "Bestseller",
+        "Promoție",
+        "Limitat"
+      ]
+    },
+    "IsFeatured": {
+      "type": "boolean",
+      "default": false
+    },
+    "categorii": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::categorii.categorii",
+      "inversedBy": "produses"
+    }
+  }
+}

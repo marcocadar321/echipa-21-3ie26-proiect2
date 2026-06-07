@@ -1,0 +1,45 @@
+{
+  "kind": "collectionType",
+  "collectionName": "categoriis",
+  "info": {
+    "singularName": "categorii",
+    "pluralName": "categoriis",
+    "displayName": "Categorii"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "Nume": {
+      "type": "string",
+      "required": true
+    },
+    "Slug": {
+      "type": "uid",
+      "targetField": "Nume"
+    },
+    "Descriere": {
+      "type": "string"
+    },
+    "Imagine": {
+      "type": "media",
+      "multiple": false,
+      "allowedTypes": [
+        "images",
+        "files",
+        "videos",
+        "audios"
+      ]
+    },
+    "Ordine": {
+      "type": "integer"
+    },
+    "produses": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::produse.produse",
+      "mappedBy": "categorii"
+    }
+  }
+}

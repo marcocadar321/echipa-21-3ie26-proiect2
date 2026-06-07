@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { fetchContact } from '../api/strapi';
 
 export default function ContactPage() {
   const [contact, setContact] = useState(null);
@@ -6,9 +7,8 @@ export default function ContactPage() {
   const [trimis, setTrimis] = useState(false);
 
   useEffect(() => {
-    fetch('http://localhost:1337/api/contact')
-      .then(res => res.json())
-      .then(data => setContact(data.data));
+    fetchContact()
+      .then(res => setContact(res.data.data));
   }, []);
 
   const handleChange = (e) => {
