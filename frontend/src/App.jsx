@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-
+import ContactPage from './pages/ContactPage';
 function App() {
   // 1. Păstrăm starea de Dark Mode creată de colegul tău
   const [darkMode, setDarkMode] = useState(false);
@@ -24,7 +24,9 @@ function App() {
   return (
     <Router>
       <div className="App">
-        <h1>Proiectul meu</h1>
+       <Routes>
+  <Route path="/contact" element={<ContactPage />} />
+</Routes>
         {/* Aici vom adăuga Navbar-ul și Rutele ulterior */}
       </div>
     </Router>
