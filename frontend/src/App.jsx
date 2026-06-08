@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-<<<<<<< HEAD
+
 import ContactPage from './pages/ContactPage';
-=======
+
 
 import { CartProvider } from './context/CartContext';
 import Navbar from './Navbar';
@@ -14,7 +14,7 @@ import Meniu from './Meniu';
 import PoliticaConfidentialitate from './pages/PoliticaConfidentialitate';
 import TermeniConditii from './pages/TermeniConditii';
 import AboutPage from './pages/AboutPage';
->>>>>>> 92d9bff (Adaugare pagina About)
+
 
 function App() {
   const [darkMode, setDarkMode] = useState(false);
