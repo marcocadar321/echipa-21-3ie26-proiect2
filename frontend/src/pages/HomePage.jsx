@@ -5,10 +5,10 @@ import BannerPromo      from '../components/home/BannerPromo'
 import HeroSection      from '../components/home/HeroSection'
 import IntroSection     from '../components/home/IntroSection'
 import CategoriiSection from '../components/home/CategoriiSection'
-import FeaturedProducts from '../components/home/FeaturedProducts' // Păstrăm produsele cerute de profesor
+import FeaturedProducts from '../components/home/FeaturedProducts'
 import Testimoniale     from '../components/home/Testimoniale'
 import Newsletter       from '../components/home/Newsletter'
-
+import Footer from '../components/layout/Footer'
 export default function HomePage() {
   const [home, setHome]                 = useState(null)
   const [categorii, setCategorii]       = useState([])
@@ -17,11 +17,44 @@ export default function HomePage() {
   const [banner, setBanner]             = useState(null)
 
   useEffect(() => {
-    fetchHome().then(r         => setHome(r.data.data)).catch(console.error)
-    fetchCategorii().then(r    => setCategorii(r.data.data)).catch(console.error)
-    fetchFeatured().then(r     => setProduse(r.data.data)).catch(console.error)
-    fetchTestimoniale().then(r => setTestimoniale(r.data.data)).catch(console.error)
-    fetchBanner().then(r       => setBanner(r.data.data)).catch(console.error)
+    // Single types (home, banner-promo): r.data.data este obiectul direct
+    // Trebuie să extragem .attributes din el
+    fetchHome()
+      .then(r => {
+        const raw = r.data.data
+        // Strapi v4: datele sunt în .attributes
+        setHome(raw?.attributes || raw)
+      })
+      .catch(console.error)
+
+    fetchBanner()
+      .then(r => {
+        const raw = r.data.data
+        setBanner(raw?.attributes || raw)
+      })
+      .catch(console.error)
+
+    // Collection types: r.data.data este un array, fiecare item are .attributes
+    fetchCategorii()
+      .then(r => {
+        const raw = r.data.data || []
+        setCategorii(raw.map(item => ({ id: item.id, ...( item.attributes || item) })))
+      })
+      .catch(console.error)
+
+    fetchFeatured()
+      .then(r => {
+        const raw = r.data.data || []
+        setProduse(raw.map(item => ({ id: item.id, ...(item.attributes || item) })))
+      })
+      .catch(console.error)
+
+    fetchTestimoniale()
+      .then(r => {
+        const raw = r.data.data || []
+        setTestimoniale(raw.map(item => ({ id: item.id, ...(item.attributes || item) })))
+      })
+      .catch(console.error)
   }, [])
 
   return (
@@ -29,35 +62,31 @@ export default function HomePage() {
       <div className="w-full">
         {/* 1. Banner Promoțional */}
         {banner?.IsActiv && <BannerPromo data={banner} />}
-        
+
         {/* 2. Secțiunea Hero */}
         <HeroSection data={home} />
-        
+
         {/* 3. Secțiunea Introducere */}
         <IntroSection data={home} />
-        
+
         {/* 4. Secțiunea Categorii */}
         <CategoriiSection data={categorii} />
-        
-        {/* 5. PRODUSE RECOMANDATE (Cerute de profesor) */}
-        {/* Le izolăm într-un container block curat ca să nu mai strice restul paginii */}
+
+        {/* 5. Produse recomandate */}
         <div className="block w-full clear-both my-12">
           <FeaturedProducts data={produse} />
         </div>
-        
-        {/* 6. Secțiunea Testimoniale (Recenzii) */}
+
+        {/* 6. Testimoniale */}
         <div className="block w-full clear-both my-12">
           <Testimoniale data={testimoniale} />
         </div>
-        
-        {/* 7. Secțiunea Newsletter */}
+
+        {/* 7. Newsletter */}
         <Newsletter />
       </div>
 
-      {/* 8. FOOTER (Subsolul paginii) */}
-      <footer className="bg-gray-100 dark:bg-gray-800 py-6 text-center text-sm text-gray-500 dark:text-gray-400 border-t border-gray-200 dark:border-gray-700 w-full block mt-auto">
-        <p>&copy; {new Date().getFullYear()} Flori - Toate drepturile rezervate.</p>
-      </footer>
+      <Footer />
     </main>
   )
 }

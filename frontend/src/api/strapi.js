@@ -12,4 +12,4 @@ export const fetchCategorii    = () => API.get('/categoriis?populate=*&sort=Ordi
 export const fetchFeatured     = () => API.get('/produses?filters[IsFeatured][$eq]=true&populate=*&pagination[limit]=8')
 export const fetchTestimoniale = () => API.get('/testimoniales?filters[IsVisible][$eq]=true&populate=*')
 export const fetchBanner       = () => API.get('/banner-promo')
-export const fetchContact = () => API.get('/contact')
+export const fetchContact      = () => API.get('/contact')

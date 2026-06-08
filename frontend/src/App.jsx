@@ -9,6 +9,8 @@ import Navbar from './Navbar';
 import CartDrawer from './components/layout/CartDrawer';
 import CookieBanner from './components/layout/CookieBanner';
 
+import Footer from './components/layout/Footer';
+
 import HomePage from './pages/HomePage';
 import Meniu from './Meniu';
 import PoliticaConfidentialitate from './pages/PoliticaConfidentialitate';
@@ -38,6 +40,7 @@ function App() {
       <Route path="/" element={<HomePage />} />
       <Route path="/meniu" element={<Meniu />} />
       <Route path="/aranjamente" element={<Meniu />} />
+      <Route path="/contact" element={<ContactPage />} />
 
       <Route path="/politica-confidentialitate" element={<PoliticaConfidentialitate />} />
       <Route path="/termeni-conditii" element={<TermeniConditii />} />

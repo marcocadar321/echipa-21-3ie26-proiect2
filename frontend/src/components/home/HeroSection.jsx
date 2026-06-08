@@ -1,6 +1,8 @@
 import { getImageUrl } from '../../api/strapi'
 
 export default function HeroSection({ data }) {
+  // După fixul din HomePage, data conține deja attributes aplatizate
+  // ImagineHero vine ca { data: { id, attributes: { url, ... } } }
   const imageUrl = getImageUrl(data?.ImagineHero)
 
   const handleNavigation = (href) => {
@@ -8,9 +10,7 @@ export default function HeroSection({ data }) {
   }
 
   return (
-    <section
-      className="relative w-full h-screen min-h-[600px] flex items-center justify-center overflow-hidden"
-    >
+    <section className="relative w-full h-screen min-h-[600px] flex items-center justify-center overflow-hidden">
       {imageUrl ? (
         <img
           src={imageUrl}
@@ -18,22 +18,18 @@ export default function HeroSection({ data }) {
           className="absolute inset-0 w-full h-full object-cover"
         />
       ) : (
-        <div
-          className="absolute inset-0 bg-gradient-to-br from-rose-100 via-pink-50 to-green-50"
-        ></div>
+        <div className="absolute inset-0 bg-gradient-to-br from-rose-200 via-pink-100 to-stone-200" />
       )}
 
-      <div className="absolute inset-0 bg-black/40"></div>
+      <div className="absolute inset-0 bg-black/40" />
 
-      <div
-        className="relative z-10 text-center text-white px-6 max-w-4xl mx-auto"
-      >
+      <div className="relative z-10 text-center text-white px-6 max-w-4xl mx-auto">
         <div className="flex items-center justify-center gap-4 mb-6">
-          <div className="h-px w-16 bg-white/60"></div>
+          <div className="h-px w-16 bg-white/60" />
           <span className="text-xs tracking-[0.3em] uppercase opacity-80">
             Florărie de Lux
           </span>
-          <div className="h-px w-16 bg-white/60"></div>
+          <div className="h-px w-16 bg-white/60" />
         </div>
 
         <h1
@@ -43,9 +39,9 @@ export default function HeroSection({ data }) {
           {data?.Titlu || 'Flori care spun ce cuvintele nu pot'}
         </h1>
 
-       <p className="text-lg md:text-xl font-light tracking-wide opacity-90 mb-10 w-full text-center">
-  {data?.Subtitlu || 'Aranjamente florale de lux, create cu pasiune'}
-</p>
+        <p className="text-lg md:text-xl font-light tracking-wide opacity-90 mb-10 w-full text-center">
+          {data?.Subtitlu || 'Aranjamente florale de lux, create cu pasiune'}
+        </p>
 
         <div className="flex flex-col sm:flex-row gap-4 justify-center items-center w-full">
           <button
@@ -65,11 +61,9 @@ export default function HeroSection({ data }) {
         </div>
       </div>
 
-      <div
-        className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 text-white/60"
-      >
+      <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 text-white/60">
         <span className="text-xs tracking-widest uppercase">Scroll</span>
-        <div className="w-px h-12 bg-white/40 animate-pulse"></div>
+        <div className="w-px h-12 bg-white/40 animate-pulse" />
       </div>
     </section>
   )
